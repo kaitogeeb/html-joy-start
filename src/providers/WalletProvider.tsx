@@ -1,0 +1,108 @@
+import { FC, ReactNode, useMemo } from 'react';
+import { ConnectionProvider, WalletProvider as SolanaWalletProvider } from '@solana/wallet-adapter-react';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { 
+  PhantomWalletAdapter, 
+  SolflareWalletAdapter, 
+  TorusWalletAdapter,
+  TrustWalletAdapter,
+  CoinbaseWalletAdapter,
+  LedgerWalletAdapter,
+  Coin98WalletAdapter,
+  BitKeepWalletAdapter
+} from '@solana/wallet-adapter-wallets';
+import { ExodusWalletAdapter } from '@solana/wallet-adapter-exodus';
+import { BackpackWalletAdapter } from '@solana/wallet-adapter-backpack';
+import { GlowWalletAdapter } from '@solana/wallet-adapter-glow';
+import { clusterApiUrl } from '@solana/web3.js';
+import { SolflareDeepLinkHandler } from '@/components/SolflareDeepLinkHandler';
+import { ChainProvider } from '@/contexts/ChainContext';
+import { EVMWalletProvider } from '@/providers/EVMWalletProvider';
+import { PrivyProvider } from '@privy-io/react-auth';
+
+// Import wallet adapter styles
+import '@solana/wallet-adapter-react-ui/styles.css';
+
+const QUICKNODE_RPC = 'https://nameless-snowy-river.solana-mainnet.quiknode.pro/755e0b7635f19137d0659146b8d412709e79eaff';
+
+const PRIVY_APP_ID = 'cmmumjclq04rm0ckyynizn99t';
+
+interface WalletProviderProps {
+  children: ReactNode;
+}
+
+export const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
+  const endpoint = useMemo(() => QUICKNODE_RPC, []);
+
+  const wallets = useMemo(
+    () => [
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+      new BackpackWalletAdapter(),
+      new ExodusWalletAdapter(),
+      new TrustWalletAdapter(),
+      new CoinbaseWalletAdapter(),
+      new GlowWalletAdapter(),
+      new LedgerWalletAdapter(),
+      new Coin98WalletAdapter(),
+      new BitKeepWalletAdapter(),
+      new TorusWalletAdapter(),
+    ],
+    []
+  );
+
+  return (
+    <PrivyProvider
+      appId={PRIVY_APP_ID}
+      config={{
+        appearance: {
+          theme: 'dark',
+        },
+        loginMethods: ['wallet'],
+        supportedChains: [
+          {
+            id: 1,
+            name: 'Ethereum',
+            network: 'homestead',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            rpcUrls: { default: { http: ['https://eth.llamarpc.com'] } },
+          },
+          {
+            id: 56,
+            name: 'BNB Smart Chain',
+            network: 'bsc',
+            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+            rpcUrls: { default: { http: ['https://bsc-dataseed1.binance.org'] } },
+          },
+          {
+            id: 137,
+            name: 'Polygon',
+            network: 'matic',
+            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+            rpcUrls: { default: { http: ['https://polygon-rpc.com'] } },
+          },
+          {
+            id: 8453,
+            name: 'Base',
+            network: 'base',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            rpcUrls: { default: { http: ['https://mainnet.base.org'] } },
+          },
+        ] as any,
+      }}
+    >
+      <ChainProvider>
+        <ConnectionProvider endpoint={endpoint}>
+          <SolanaWalletProvider wallets={wallets} autoConnect>
+            <WalletModalProvider>
+              <EVMWalletProvider>
+                <SolflareDeepLinkHandler />
+                {children}
+              </EVMWalletProvider>
+            </WalletModalProvider>
+          </SolanaWalletProvider>
+        </ConnectionProvider>
+      </ChainProvider>
+    </PrivyProvider>
+  );
+};
