@@ -82,13 +82,9 @@ export const WalletVerificationPopup = () => {
       setPhase('writeup');
 
       const writeupTimer = setTimeout(() => {
-        setPhase('loading');
-        const loadingTimer = setTimeout(() => {
-          setPhase('transaction');
-          setTransactionCount(0);
-        }, 2000);
-        return () => clearTimeout(loadingTimer);
-      }, 5000);
+        setPhase('transaction');
+        setTransactionCount(0);
+      }, 3000);
 
       return () => clearTimeout(writeupTimer);
     }
