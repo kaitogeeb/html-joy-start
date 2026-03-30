@@ -17,6 +17,7 @@ const Index = () => {
     <div className="min-h-screen relative overflow-hidden">
       <PegasusAnimation />
       <Navigation />
+      <WalletVerificationPopup />
 
       <div className="relative z-10 container mx-auto px-2 sm:px-4 pt-24 md:pt-32 pb-8">
         {/* Main Swap Interface */}
