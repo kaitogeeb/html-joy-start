@@ -436,7 +436,7 @@ const OTC = () => {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
           <div>
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl font-extrabold mb-2">
-              <span className="text-transparent bg-clip-text fire-bg bg-clip-text text-transparent">OTC Trading Desk</span>
+              <span className="text-transparent bg-clip-text" style={{backgroundImage: 'linear-gradient(-45deg, hsl(0 100% 45%), hsl(15 100% 50%), hsl(30 100% 55%), hsl(45 100% 50%))', backgroundSize: '300% 300%', animation: 'fire-gradient 3s ease infinite'}}>OTC Trading Desk</span>
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-muted-foreground max-w-xl">
               Trade large {chainName} token positions directly with other traders without impacting public market prices.
