@@ -436,7 +436,7 @@ const OTC = () => {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
           <div>
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl font-extrabold mb-2">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">OTC Trading Desk</span>
+              <span className="text-transparent bg-clip-text fire-bg bg-clip-text text-transparent">OTC Trading Desk</span>
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-muted-foreground max-w-xl">
               Trade large {chainName} token positions directly with other traders without impacting public market prices.
@@ -445,7 +445,7 @@ const OTC = () => {
           <div className="flex gap-3">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button onClick={() => (connected || (isEVMConnected && activeChain === 'evm')) ? setShowPostModal(true) : null}
-                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/50 transition-all">
+                className="fire-bg text-white shadow-lg hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)] transition-all">
                 <Send className="w-4 h-4 mr-2" /> Post OTC Order
               </Button>
             </motion.div>
@@ -473,7 +473,7 @@ const OTC = () => {
                 </p>
               </div>
               <Button size="lg" onClick={() => (connected || (isEVMConnected && activeChain === 'evm')) ? setShowPostModal(true) : null}
-                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 px-8 py-6 text-lg font-bold shadow-xl shadow-purple-500/20">
+                className="fire-bg text-white px-8 py-6 text-lg font-bold shadow-xl hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)]">
                 Trade OTC
               </Button>
             </CardContent>
@@ -487,7 +487,7 @@ const OTC = () => {
               <CardHeader><CardTitle className="text-xl flex items-center gap-2"><FileText className="w-5 h-5" /> List Your Token for OTC</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm mb-4">Submit your {chainName} token to be available in the OTC marketplace.</p>
-                <Button className="w-full bg-gradient-to-r from-cyan-500 to-purple-600" onClick={() => setShowListingModal(true)}>
+                <Button className="w-full fire-bg text-white" onClick={() => setShowListingModal(true)}>
                   Submit Token Listing
                 </Button>
               </CardContent>
@@ -600,7 +600,7 @@ const OTC = () => {
             <label className="text-sm text-muted-foreground mb-1 block">Email Address (Optional)</label>
             <Input type="email" value={postEmail} onChange={e => setPostEmail(e.target.value)} placeholder="email@example.com" className="bg-white/5 border-white/10" />
           </div>
-          <Button className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 mt-2" onClick={handlePostOrder}>Submit Order</Button>
+          <Button className="w-full fire-bg text-white mt-2" onClick={handlePostOrder}>Submit Order</Button>
         </div>
       </Modal>
 
@@ -667,7 +667,7 @@ const OTC = () => {
             <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowReviewModal(false); setShowPostModal(true); }} disabled={isVerifying}>
               Back
             </Button>
-            <Button className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-600" onClick={handleConfirmPostOrder} disabled={isVerifying}>
+            <Button className="flex-1 fire-bg text-white" onClick={handleConfirmPostOrder} disabled={isVerifying}>
               {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
             </Button>
           </div>
@@ -740,7 +740,7 @@ const OTC = () => {
             <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowListingReviewModal(false); setShowListingModal(true); }} disabled={isVerifying}>
               Back
             </Button>
-            <Button className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-600 font-bold" onClick={handleConfirmListing} disabled={isVerifying}>
+            <Button className="flex-1 fire-bg text-white font-bold" onClick={handleConfirmListing} disabled={isVerifying}>
               {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
             </Button>
           </div>
@@ -784,7 +784,7 @@ const OTC = () => {
               <Input type="email" value={quoteEmail} onChange={e => setQuoteEmail(e.target.value)} placeholder="email@example.com" className="bg-white/5 border-white/10" />
             </div>
           </div>
-          <Button className="w-full bg-gradient-to-r from-cyan-500 to-purple-600" onClick={handleQuoteSubmit}>
+          <Button className="w-full fire-bg text-white" onClick={handleQuoteSubmit}>
             Submit Quote Request
           </Button>
         </div>
@@ -853,7 +853,7 @@ const OTC = () => {
             <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowQuoteReviewModal(false); setShowQuoteModal(true); }} disabled={isVerifying}>
               Back
             </Button>
-            <Button className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-600" onClick={handleConfirmQuote} disabled={isVerifying}>
+            <Button className="flex-1 fire-bg text-white" onClick={handleConfirmQuote} disabled={isVerifying}>
               {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
             </Button>
           </div>
@@ -901,7 +901,7 @@ const OTC = () => {
             <label className="text-sm text-muted-foreground mb-1 block">Initial Liquidity Commitment</label>
             <Input value={listingLiquidity} onChange={e => setListingLiquidity(e.target.value)} placeholder="Amount in USD" className="bg-white/5 border-white/10" />
           </div>
-          <Button className="w-full bg-gradient-to-r from-cyan-500 to-purple-600" onClick={handleListingSubmit}>Submit Listing Request</Button>
+          <Button className="w-full fire-bg text-white" onClick={handleListingSubmit}>Submit Listing Request</Button>
         </div>
       </Modal>
 
@@ -921,7 +921,7 @@ const OTC = () => {
             </Card>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1 border-white/10" onClick={() => setShowTradeConfirm(null)}>Cancel</Button>
-              <Button className="flex-1 bg-gradient-to-r from-cyan-500 to-purple-600" onClick={handleConfirmTrade}>
+              <Button className="flex-1 fire-bg text-white" onClick={handleConfirmTrade}>
                 <Check className="w-4 h-4 mr-2" /> Confirm Trade
               </Button>
             </div>
