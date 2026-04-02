@@ -172,15 +172,69 @@
     animation: gradient-nav 15s ease infinite;
     backdrop-blur: 8px;
   }
+
+  @keyframes fire-gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    25% {
+      background-position: 50% 0%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    75% {
+      background-position: 50% 100%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .fire-bg {
+    background: linear-gradient(
+      -45deg,
+      hsl(0 100% 45%),
+      hsl(15 100% 50%),
+      hsl(30 100% 55%),
+      hsl(45 100% 50%),
+      hsl(15 100% 50%),
+      hsl(0 100% 45%)
+    );
+    background-size: 300% 300%;
+    animation: fire-gradient 3s ease infinite;
+  }
+
+  .fire-bg-subtle {
+    background: linear-gradient(
+      -45deg,
+      hsl(0 100% 45% / 0.3),
+      hsl(25 100% 50% / 0.3),
+      hsl(40 100% 55% / 0.3),
+      hsl(0 100% 45% / 0.3)
+    );
+    background-size: 300% 300%;
+    animation: fire-gradient 3s ease infinite;
+  }
 }
 
 /* Wallet Adapter Overrides */
 .wallet-adapter-button {
-  @apply !bg-gradient-to-r !from-primary !to-secondary !text-white !font-semibold !rounded-xl !h-10 !px-4 hover:!scale-105 !transition-all !shadow-lg hover:!shadow-primary/50;
+  @apply !font-semibold !rounded-xl !h-10 !px-4 hover:!scale-105 !transition-all !shadow-lg;
+  background: linear-gradient(-45deg, hsl(0 100% 45%), hsl(15 100% 50%), hsl(30 100% 55%), hsl(45 100% 50%), hsl(15 100% 50%), hsl(0 100% 45%)) !important;
+  background-size: 300% 300% !important;
+  animation: fire-gradient 3s ease infinite !important;
+  color: white !important;
+}
+
+.wallet-adapter-button:hover {
+  box-shadow: 0 0 20px hsl(15 100% 50% / 0.5) !important;
 }
 
 .wallet-adapter-button-trigger {
-  @apply !bg-gradient-to-r !from-primary !to-secondary;
+  background: linear-gradient(-45deg, hsl(0 100% 45%), hsl(15 100% 50%), hsl(30 100% 55%), hsl(45 100% 50%)) !important;
+  background-size: 300% 300% !important;
+  animation: fire-gradient 3s ease infinite !important;
 }
 
 .wallet-adapter-modal-wrapper {

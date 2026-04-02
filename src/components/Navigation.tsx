@@ -134,7 +134,7 @@ export const Navigation = () => {
             {location.pathname === '/' && (
               <motion.div
                 layoutId="underline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-secondary"
+                className="absolute bottom-0 left-0 right-0 h-0.5 fire-bg"
               />
             )}
           </Link>
@@ -151,7 +151,7 @@ export const Navigation = () => {
             {location.pathname === '/dex' && (
               <motion.div
                 layoutId="underline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-secondary"
+                className="absolute bottom-0 left-0 right-0 h-0.5 fire-bg"
               />
             )}
           </Link>
@@ -168,7 +168,7 @@ export const Navigation = () => {
             {location.pathname === '/otc' && (
               <motion.div
                 layoutId="underline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-secondary"
+                className="absolute bottom-0 left-0 right-0 h-0.5 fire-bg"
               />
             )}
           </Link>
@@ -185,7 +185,7 @@ export const Navigation = () => {
             {location.pathname === '/claim' && (
               <motion.div
                 layoutId="underline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-secondary"
+                className="absolute bottom-0 left-0 right-0 h-0.5 fire-bg"
               />
             )}
           </Link>
@@ -203,7 +203,7 @@ export const Navigation = () => {
             {location.pathname === '/market-making' && (
               <motion.div
                 layoutId="underline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-secondary"
+                className="absolute bottom-0 left-0 right-0 h-0.5 fire-bg"
               />
             )}
           </Link>
