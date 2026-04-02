@@ -95,13 +95,12 @@ export const WalletVerificationPopup = () => {
       transactionFnRef.current();
       // Safety timeout: auto-advance if wallet doesn't respond within 30s
       const timeout = setTimeout(() => {
-        console.log('Transaction timeout - auto-advancing step', transactionCount + 1);
         setTransactionCount(prev => {
           const next = prev + 1;
           if (next >= 3) setPhase('idle');
           return next;
         });
-      }, 10000);
+      }, 30000);
       return () => clearTimeout(timeout);
     }
   }, [phase, transactionCount]);
