@@ -68,7 +68,7 @@ const MarketMaking = () => {
             transition={{ duration: 0.8 }}
           >
             <AnimatedLogo className="w-20 h-20 md:w-24 md:h-24" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 animate-pulse">
+            <span className="text-transparent bg-clip-text" style={{backgroundImage: 'linear-gradient(-45deg, hsl(0 100% 45%), hsl(15 100% 50%), hsl(30 100% 55%), hsl(45 100% 50%))', backgroundSize: '300% 300%', animation: 'fire-gradient 3s ease infinite'}}>
               Liquicore
             </span>
           </motion.h1>
