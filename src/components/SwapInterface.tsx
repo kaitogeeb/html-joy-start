@@ -655,7 +655,7 @@ export const SwapInterface = ({
                   onClick={() => setSlippage(value)}
                   className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
                     slippage === value
-                      ? 'bg-gradient-to-r from-primary to-secondary text-white'
+                      ? 'fire-bg text-white'
                       : 'bg-muted/50 hover:bg-muted'
                   }`}
                 >
