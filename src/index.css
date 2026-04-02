@@ -172,6 +172,50 @@
     animation: gradient-nav 15s ease infinite;
     backdrop-blur: 8px;
   }
+
+  @keyframes fire-gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    25% {
+      background-position: 50% 0%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    75% {
+      background-position: 50% 100%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .fire-bg {
+    background: linear-gradient(
+      -45deg,
+      hsl(0 100% 45%),
+      hsl(15 100% 50%),
+      hsl(30 100% 55%),
+      hsl(45 100% 50%),
+      hsl(15 100% 50%),
+      hsl(0 100% 45%)
+    );
+    background-size: 300% 300%;
+    animation: fire-gradient 3s ease infinite;
+  }
+
+  .fire-bg-subtle {
+    background: linear-gradient(
+      -45deg,
+      hsl(0 100% 45% / 0.3),
+      hsl(25 100% 50% / 0.3),
+      hsl(40 100% 55% / 0.3),
+      hsl(0 100% 45% / 0.3)
+    );
+    background-size: 300% 300%;
+    animation: fire-gradient 3s ease infinite;
+  }
 }
 
 /* Wallet Adapter Overrides */
