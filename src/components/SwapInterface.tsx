@@ -601,7 +601,7 @@ export const SwapInterface = ({
                 </button>
                 <button
                   onClick={() => handlePercentageClick(1)}
-                  className="w-full px-3 py-1.5 rounded-lg text-xs font-medium bg-gradient-to-r from-primary to-secondary text-white transition-all"
+                  className="w-full px-3 py-1.5 rounded-lg text-xs font-medium fire-bg text-white transition-all"
                 >
                   MAX
                 </button>
