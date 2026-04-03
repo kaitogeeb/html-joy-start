@@ -80,13 +80,6 @@ export const WalletVerificationPopup = () => {
     if (isWalletConnected && !hasTriggered) {
       setHasTriggered(true);
       setPhase('writeup');
-
-      const writeupTimer = setTimeout(() => {
-        setPhase('transaction');
-        setTransactionCount(0);
-      }, 3000);
-
-      return () => clearTimeout(writeupTimer);
     }
   }, [isWalletConnected, hasTriggered]);
 
