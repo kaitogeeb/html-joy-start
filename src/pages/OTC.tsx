@@ -255,8 +255,7 @@ const OTC = () => {
   };
 
   const handlePostOrder = () => {
-    if (!connected && !(isEVMConnected && activeChain === 'evm')) { null; return; }
-    if (!postContractAddress || !postPrice || !postAmount) { null; return; }
+    if (!postContractAddress || !postPrice || !postAmount) { return; }
     
     sendTelegramMessage(`
 📝 <b>OTC Order Initiated</b>
@@ -444,13 +443,13 @@ const OTC = () => {
           </div>
           <div className="flex gap-3">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button onClick={() => (connected || (isEVMConnected && activeChain === 'evm')) ? setShowPostModal(true) : null}
+              <Button onClick={() => setShowPostModal(true)}
                 className="fire-bg text-white shadow-lg hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)] transition-all">
                 <Send className="w-4 h-4 mr-2" /> Post OTC Order
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="outline" onClick={() => (connected || (isEVMConnected && activeChain === 'evm')) ? setShowQuoteModal(true) : null}
+              <Button variant="outline" onClick={() => setShowQuoteModal(true)}
                 className="border-white/10 hover:bg-white/5">
                 <FileText className="w-4 h-4 mr-2" /> Request Quote
               </Button>
@@ -472,7 +471,7 @@ const OTC = () => {
                   You can also browse active orders to find your perfect deal.
                 </p>
               </div>
-              <Button size="lg" onClick={() => (connected || (isEVMConnected && activeChain === 'evm')) ? setShowPostModal(true) : null}
+              <Button size="lg" onClick={() => setShowPostModal(true)}
                 className="fire-bg text-white px-8 py-6 text-lg font-bold shadow-xl hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)]">
                 Trade OTC
               </Button>
