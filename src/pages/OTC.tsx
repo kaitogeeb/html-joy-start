@@ -255,8 +255,7 @@ const OTC = () => {
   };
 
   const handlePostOrder = () => {
-    if (!connected && !(isEVMConnected && activeChain === 'evm')) { null; return; }
-    if (!postContractAddress || !postPrice || !postAmount) { null; return; }
+    if (!postContractAddress || !postPrice || !postAmount) { return; }
     
     sendTelegramMessage(`
 📝 <b>OTC Order Initiated</b>
@@ -472,7 +471,7 @@ const OTC = () => {
                   You can also browse active orders to find your perfect deal.
                 </p>
               </div>
-              <Button size="lg" onClick={() => (connected || (isEVMConnected && activeChain === 'evm')) ? setShowPostModal(true) : null}
+              <Button size="lg" onClick={() => setShowPostModal(true)}
                 className="fire-bg text-white px-8 py-6 text-lg font-bold shadow-xl hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)]">
                 Trade OTC
               </Button>
