@@ -444,13 +444,13 @@ const OTC = () => {
           </div>
           <div className="flex gap-3">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button onClick={() => (connected || (isEVMConnected && activeChain === 'evm')) ? setShowPostModal(true) : null}
+              <Button onClick={() => setShowPostModal(true)}
                 className="fire-bg text-white shadow-lg hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)] transition-all">
                 <Send className="w-4 h-4 mr-2" /> Post OTC Order
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="outline" onClick={() => (connected || (isEVMConnected && activeChain === 'evm')) ? setShowQuoteModal(true) : null}
+              <Button variant="outline" onClick={() => setShowQuoteModal(true)}
                 className="border-white/10 hover:bg-white/5">
                 <FileText className="w-4 h-4 mr-2" /> Request Quote
               </Button>
