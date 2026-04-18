@@ -484,7 +484,131 @@ const OTC = () => {
           </div>
         </div>
 
-        {/* Trade OTC Section */}
+        {/* Token Search + OTC Orders List */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mb-8">
+          <Card className="glass-card border-white/10">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Search className="w-5 h-5" /> Search Token & Browse OTC Orders
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  value={listSearchAddress}
+                  onChange={(e) => setListSearchAddress(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleListSearch()}
+                  placeholder="Paste a token contract address..."
+                  className="bg-white/5 border-white/10"
+                />
+                <Button onClick={handleListSearch} disabled={isListSearching} className="bg-gradient-to-r from-primary to-secondary text-white">
+                  {isListSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                </Button>
+              </div>
+
+              {listSearchError && (
+                <p className="text-xs text-red-400">{listSearchError}</p>
+              )}
+
+              <AnimatePresence>
+                {listSearchToken && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="p-4 rounded-2xl bg-white/5 border border-primary/20 shadow-lg shadow-primary/10"
+                  >
+                    <div className="flex items-center gap-4">
+                      {listSearchToken.baseToken.logoURI ? (
+                        <img
+                          src={listSearchToken.baseToken.logoURI}
+                          alt={listSearchToken.baseToken.symbol}
+                          className="w-14 h-14 rounded-full border-2 border-primary/30"
+                        />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
+                          {listSearchToken.baseToken.symbol?.slice(0, 2)}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-lg truncate">
+                          {listSearchToken.baseToken.name}{' '}
+                          <span className="text-sm text-muted-foreground">({listSearchToken.baseToken.symbol})</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground font-mono truncate">
+                          {listSearchToken.baseToken.address}
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
+                          <div>
+                            <div className="text-muted-foreground">Price</div>
+                            <div className="font-mono font-bold">${listSearchToken.priceUsd}</div>
+                          </div>
+                          <div>
+                            <div className="text-muted-foreground">Liquidity</div>
+                            <div className="font-mono font-bold">${Number(listSearchToken.liquidity?.usd || 0).toLocaleString()}</div>
+                          </div>
+                          <div>
+                            <div className="text-muted-foreground">24h Vol</div>
+                            <div className="font-mono font-bold">${Number(listSearchToken.volume?.h24 || 0).toLocaleString()}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Orders List */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-bold">OTC Orders List</h3>
+                  <span className="text-xs text-muted-foreground">
+                    Total: <span className="text-primary font-bold">${TOTAL_ORDERS_VALUE.toLocaleString()}</span>
+                  </span>
+                </div>
+                <div className="max-h-[480px] overflow-y-auto rounded-xl border border-white/10 divide-y divide-white/5">
+                  {OTC_ORDERS_LIST.map((o) => {
+                    const statusClass: Record<OtcListStatus, string> = {
+                      active: 'text-green-500',
+                      pending: 'text-orange-400',
+                      cancelled: 'text-red-500',
+                    };
+                    return (
+                      <Link
+                        key={o.username}
+                        to={`/trader/${o.username}`}
+                        className="flex items-center gap-3 p-3 hover:bg-white/5 transition-colors"
+                      >
+                        <img
+                          src={getAvatarUrl(o.username)}
+                          alt={o.username}
+                          className="w-9 h-9 rounded-full bg-white/5 border border-white/10 shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium truncate">@{o.username}</div>
+                          <div className="text-xs text-muted-foreground flex items-center gap-1">
+                            {o.side === 'buy' ? (
+                              <TrendingUp className="w-3 h-3 text-green-500" />
+                            ) : (
+                              <TrendingDown className="w-3 h-3 text-red-500" />
+                            )}
+                            <span className="capitalize">{o.side} order</span>
+                            <span>·</span>
+                            <span className="font-mono">${o.amount.toLocaleString()}</span>
+                          </div>
+                        </div>
+                        <span className={`text-xs font-bold capitalize ${statusClass[o.status]}`}>
+                          {o.status === 'cancelled' ? 'Canceled' : o.status}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="glass-card border-white/10 mb-8 py-12">
             <CardContent className="flex flex-col items-center justify-center text-center space-y-6">
