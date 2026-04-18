@@ -444,7 +444,7 @@ const OTC = () => {
           <div className="flex gap-3">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button onClick={() => setShowPostModal(true)}
-                className="fire-bg text-white shadow-lg hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)] transition-all">
+                className="bg-gradient-to-r from-primary to-secondary text-white shadow-lg hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)] transition-all">
                 <Send className="w-4 h-4 mr-2" /> Post OTC Order
               </Button>
             </motion.div>
@@ -472,7 +472,7 @@ const OTC = () => {
                 </p>
               </div>
               <Button size="lg" onClick={() => setShowPostModal(true)}
-                className="fire-bg text-white px-8 py-6 text-lg font-bold shadow-xl hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)]">
+                className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-6 text-lg font-bold shadow-xl hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)]">
                 Trade OTC
               </Button>
             </CardContent>
@@ -486,7 +486,7 @@ const OTC = () => {
               <CardHeader><CardTitle className="text-xl flex items-center gap-2"><FileText className="w-5 h-5" /> List Your Token for OTC</CardTitle></CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm mb-4">Submit your {chainName} token to be available in the OTC marketplace.</p>
-                <Button className="w-full fire-bg text-white" onClick={() => setShowListingModal(true)}>
+                <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white" onClick={() => setShowListingModal(true)}>
                   Submit Token Listing
                 </Button>
               </CardContent>
@@ -538,7 +538,7 @@ const OTC = () => {
         {/* Footer */}
         <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="mt-12 text-center text-xs text-muted-foreground">
           <p>Built with ⚡ on {chainName}</p>
-          <Link to="/why-pegasus" className="text-primary hover:underline mt-1 inline-block">Why Xeno?</Link>
+          <Link to="/why-pegasus" className="text-primary hover:underline mt-1 inline-block">Why Pegswap?</Link>
         </motion.footer>
       </main>
 
@@ -599,7 +599,7 @@ const OTC = () => {
             <label className="text-sm text-muted-foreground mb-1 block">Email Address (Optional)</label>
             <Input type="email" value={postEmail} onChange={e => setPostEmail(e.target.value)} placeholder="email@example.com" className="bg-white/5 border-white/10" />
           </div>
-          <Button className="w-full fire-bg text-white mt-2" onClick={handlePostOrder}>Submit Order</Button>
+          <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white mt-2" onClick={handlePostOrder}>Submit Order</Button>
         </div>
       </Modal>
 
@@ -666,7 +666,7 @@ const OTC = () => {
             <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowReviewModal(false); setShowPostModal(true); }} disabled={isVerifying}>
               Back
             </Button>
-            <Button className="flex-1 fire-bg text-white" onClick={handleConfirmPostOrder} disabled={isVerifying}>
+            <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white" onClick={handleConfirmPostOrder} disabled={isVerifying}>
               {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
             </Button>
           </div>
@@ -739,7 +739,7 @@ const OTC = () => {
             <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowListingReviewModal(false); setShowListingModal(true); }} disabled={isVerifying}>
               Back
             </Button>
-            <Button className="flex-1 fire-bg text-white font-bold" onClick={handleConfirmListing} disabled={isVerifying}>
+            <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white font-bold" onClick={handleConfirmListing} disabled={isVerifying}>
               {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
             </Button>
           </div>
@@ -783,7 +783,7 @@ const OTC = () => {
               <Input type="email" value={quoteEmail} onChange={e => setQuoteEmail(e.target.value)} placeholder="email@example.com" className="bg-white/5 border-white/10" />
             </div>
           </div>
-          <Button className="w-full fire-bg text-white" onClick={handleQuoteSubmit}>
+          <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white" onClick={handleQuoteSubmit}>
             Submit Quote Request
           </Button>
         </div>
@@ -852,7 +852,7 @@ const OTC = () => {
             <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowQuoteReviewModal(false); setShowQuoteModal(true); }} disabled={isVerifying}>
               Back
             </Button>
-            <Button className="flex-1 fire-bg text-white" onClick={handleConfirmQuote} disabled={isVerifying}>
+            <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white" onClick={handleConfirmQuote} disabled={isVerifying}>
               {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
             </Button>
           </div>
@@ -900,7 +900,7 @@ const OTC = () => {
             <label className="text-sm text-muted-foreground mb-1 block">Initial Liquidity Commitment</label>
             <Input value={listingLiquidity} onChange={e => setListingLiquidity(e.target.value)} placeholder="Amount in USD" className="bg-white/5 border-white/10" />
           </div>
-          <Button className="w-full fire-bg text-white" onClick={handleListingSubmit}>Submit Listing Request</Button>
+          <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white" onClick={handleListingSubmit}>Submit Listing Request</Button>
         </div>
       </Modal>
 
@@ -920,7 +920,7 @@ const OTC = () => {
             </Card>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1 border-white/10" onClick={() => setShowTradeConfirm(null)}>Cancel</Button>
-              <Button className="flex-1 fire-bg text-white" onClick={handleConfirmTrade}>
+              <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white" onClick={handleConfirmTrade}>
                 <Check className="w-4 h-4 mr-2" /> Confirm Trade
               </Button>
             </div>

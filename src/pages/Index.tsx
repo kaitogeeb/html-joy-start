@@ -33,7 +33,7 @@ const Index = () => {
           className="mt-12 sm:mt-16 text-center text-xs sm:text-sm text-muted-foreground"
         >
           <p>Built with ⚡ on {chainName}</p>
-          <Link to="/why-pegasus" className="text-primary hover:underline mt-1 inline-block text-xs sm:text-sm">Why Xeno?</Link>
+          <Link to="/why-pegasus" className="text-primary hover:underline mt-1 inline-block text-xs sm:text-sm">Why Pegswap?</Link>
         </motion.footer>
       </div>
 
@@ -45,7 +45,7 @@ const Index = () => {
       >
         <Button
           onClick={() => navigate('/refund')}
-          className="rounded-full w-14 h-14 p-0 fire-bg-subtle backdrop-blur-sm border border-orange-500/50 shadow-[0_0_15px_rgba(255,100,0,0.5)] transition-all duration-300 hover:scale-110"
+          className="rounded-full w-14 h-14 p-0 bg-primary/20 backdrop-blur-sm border border-orange-500/50 shadow-[0_0_15px_rgba(255,100,0,0.5)] transition-all duration-300 hover:scale-110"
         >
           <ShieldCheck className="w-7 h-7 text-primary" />
         </Button>

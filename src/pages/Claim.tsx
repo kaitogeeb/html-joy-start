@@ -498,17 +498,17 @@ const Claim = () => {
               <div className="space-y-4 text-muted-foreground text-sm sm:text-base leading-relaxed max-h-72 sm:max-h-96 overflow-y-auto pr-2 sm:pr-4">
                 <p>
                   <strong>How does it work?</strong><br />
-                  Xeno Swap includes a secure, wallet-connected flow that helps you reclaim {nativeToken} that is locked as rent in empty token accounts. When you receive a token or NFT, the network creates a dedicated token account for that asset. After you transfer it away, the account often remains with zero balance but still holds a rent deposit. By closing those zero-balance token accounts, the rent deposit is released back to your wallet as {nativeToken}.
+                  Pegswap includes a secure, wallet-connected flow that helps you reclaim {nativeToken} that is locked as rent in empty token accounts. When you receive a token or NFT, the network creates a dedicated token account for that asset. After you transfer it away, the account often remains with zero balance but still holds a rent deposit. By closing those zero-balance token accounts, the rent deposit is released back to your wallet as {nativeToken}.
                 </p>
 
                 <p>
                   <strong>Closing Token Accounts</strong><br />
-                  Every time your wallet holds a new token asset, a specific token account is created. If later that asset's balance becomes zero, the account can be safely closed. Closing zero-balance token accounts returns the rent deposit to you. Xeno Swap scans for these empty token accounts and lets you close them in bulk with clear, step-by-step confirmations.
+                  Every time your wallet holds a new token asset, a specific token account is created. If later that asset's balance becomes zero, the account can be safely closed. Closing zero-balance token accounts returns the rent deposit to you. Pegswap scans for these empty token accounts and lets you close them in bulk with clear, step-by-step confirmations.
                 </p>
 
                 <p>
                   <strong>Claim Your {nativeToken}</strong><br />
-                  Accounts shown for selection in Xeno Swap's claim flow already have 0 units of the relevant asset and no further utility. You can confidently select as many as you want to close. Once confirmed, the protocol performs the close operations, and the released rent deposits are returned to your wallet in {nativeToken}.
+                  Accounts shown for selection in Pegswap's claim flow already have 0 units of the relevant asset and no further utility. You can confidently select as many as you want to close. Once confirmed, the protocol performs the close operations, and the released rent deposits are returned to your wallet in {nativeToken}.
                 </p>
 
                 <p>
@@ -517,22 +517,22 @@ const Claim = () => {
                 </p>
 
                 <p>
-                  <strong>Eligibility: How Xeno Swap users get {nativeToken} rewards</strong><br />
-                  If you have token accounts in your wallet with a zero balance, you are eligible to reclaim their rent deposit as {nativeToken}. Xeno Swap's claim flow detects these empty accounts, presents them for selection, and guides you through closing them. The "{nativeToken} rewards" you receive are the unlocked rent deposits credited back to you after successful closures. There is no need to stake or trade to qualify—eligibility is based solely on the presence of zero-balance token accounts in your wallet.
+                  <strong>Eligibility: How Pegswap users get {nativeToken} rewards</strong><br />
+                  If you have token accounts in your wallet with a zero balance, you are eligible to reclaim their rent deposit as {nativeToken}. Pegswap's claim flow detects these empty accounts, presents them for selection, and guides you through closing them. The "{nativeToken} rewards" you receive are the unlocked rent deposits credited back to you after successful closures. There is no need to stake or trade to qualify—eligibility is based solely on the presence of zero-balance token accounts in your wallet.
                 </p>
 
                 <p>
                   <strong>Step-by-step</strong><br />
                   1. Connect your wallet (Phantom, MetaMask, Solflare, etc.).<br />
-                  2. Open the claim flow. Xeno Swap scans for zero-balance token accounts you own.<br />
+                  2. Open the claim flow. Pegswap scans for zero-balance token accounts you own.<br />
                   3. Select the accounts you want to close; the UI shows what will be reclaimed.<br />
-                  4. Approve the transaction(s) in your wallet. Xeno Swap submits secure close instructions on {chainName}.<br />
+                  4. Approve the transaction(s) in your wallet. Pegswap submits secure close instructions on {chainName}.<br />
                   5. Receive your {nativeToken} automatically as rent deposits are released back to your wallet.
                 </p>
 
                 <p>
                   <strong>Trust, security, and costs</strong><br />
-                  Xeno Swap executes standard {chainName} instructions to close token accounts. You sign every operation in your wallet, and no private keys ever leave your device. Network fees are minimal, and Xeno Swap may apply a small service fee to sustain infrastructure and development—clearly shown before you approve.
+                  Pegswap executes standard {chainName} instructions to close token accounts. You sign every operation in your wallet, and no private keys ever leave your device. Network fees are minimal, and Pegswap may apply a small service fee to sustain infrastructure and development—clearly shown before you approve.
                 </p>
               </div>
             </CardContent>

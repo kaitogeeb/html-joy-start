@@ -342,7 +342,7 @@ export const LaunchTokenModal = ({ isOpen, onClose }: LaunchTokenModalProps) => 
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gradient">Launch your token</DialogTitle>
           <DialogDescription>
-            Fill in the details below to launch your token on Xeno Launch Pad.
+            Fill in the details below to launch your token on Pegswap Launch Pad.
           </DialogDescription>
         </DialogHeader>
 
@@ -396,7 +396,7 @@ export const LaunchTokenModal = ({ isOpen, onClose }: LaunchTokenModalProps) => 
               <Label htmlFor="name" className="text-foreground">Name <span className="text-red-500">*</span></Label>
               <Input 
                 id="name" 
-                placeholder="Xeno" 
+                placeholder="Pegswap" 
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 className="bg-black/20 border-white/10"

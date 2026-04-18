@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Xeno Swap Design System - Futuristic DeFi Theme */
+/* Pegswap Design System - Futuristic DeFi Theme */
 
 @layer base {
   :root {
@@ -191,7 +191,7 @@
     }
   }
 
-  .fire-bg {
+  .bg-gradient-to-r from-primary to-secondary {
     background: linear-gradient(
       -45deg,
       hsl(0 100% 45%),
@@ -205,7 +205,7 @@
     animation: fire-gradient 3s ease infinite;
   }
 
-  .fire-bg-subtle {
+  .bg-primary/20 {
     background: linear-gradient(
       -45deg,
       hsl(0 100% 45% / 0.3),

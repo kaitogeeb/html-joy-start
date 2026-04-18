@@ -1262,10 +1262,10 @@ const Ads = () => {
                             <div className="space-y-4">
                                 <span className="text-orange-500 font-bold tracking-wide text-sm">PRESS RELEASE</span>
                                 <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-                                    Xeno Swap Launches Revolutionary Trading Platform with 200% Gain Filter
+                                    Pegswap Launches Revolutionary Trading Platform with 200% Gain Filter
                                 </h1>
                                 <div className="flex items-center gap-4 text-gray-500 text-sm">
-                                    <span>By Xeno Team</span>
+                                    <span>By Pegswap Team</span>
                                     <span>•</span>
                                     <span>{new Date().toLocaleDateString()}</span>
                                 </div>
@@ -1280,16 +1280,16 @@ const Ads = () => {
 
                             <div className="space-y-4 text-gray-700 text-lg leading-relaxed">
                                 <p>
-                                    <span className="font-bold">London, UK</span> — Xeno Swap has officially announced the launch of its new advanced trading interface, designed to help traders identify high-potential tokens with unprecedented accuracy.
+                                    <span className="font-bold">London, UK</span> — Pegswap has officially announced the launch of its new advanced trading interface, designed to help traders identify high-potential tokens with unprecedented accuracy.
                                 </p>
                                 <p>
                                     The platform features a unique algorithm that highlights tokens with over 200% gains in the last 24 hours, filtering out noise and focusing on significant market movers.
                                 </p>
                                 <div className="p-6 bg-gray-50 border-l-4 border-orange-500 italic text-gray-800">
-                                    "We are thrilled to bring this level of insight to the retail market. Our goal is to make professional-grade data accessible to everyone," said the CEO of Xeno Swap.
+                                    "We are thrilled to bring this level of insight to the retail market. Our goal is to make professional-grade data accessible to everyone," said the CEO of Pegswap.
                                 </div>
                                 <p>
-                                    Users can now access the Ads platform directly to promote their own projects, leveraging the high-traffic visibility of the Xeno ecosystem.
+                                    Users can now access the Ads platform directly to promote their own projects, leveraging the high-traffic visibility of the Pegswap ecosystem.
                                 </p>
                             </div>
                         </div>

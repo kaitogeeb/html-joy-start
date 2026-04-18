@@ -10,7 +10,7 @@ import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { AnimatedLogo } from '@/components/AnimatedLogo';
 import { useChainInfo } from '@/hooks/useChainInfo';
 
-const WhyXeno = () => {
+const WhyPegswap = () => {
   const { connect } = useWallet();
   const { chainName, nativeToken } = useChainInfo();
 
@@ -31,7 +31,7 @@ const WhyXeno = () => {
             <AnimatedLogo className="w-32 h-32 mx-auto" />
             
             <h1 className="text-4xl md:text-6xl font-extrabold text-gradient">
-              Why Xeno Swap
+              Why Pegswap
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -159,7 +159,7 @@ const WhyXeno = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">How Xeno Swap Works</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">How Pegswap Works</h2>
           </motion.div>
 
           <div className="space-y-4">
@@ -324,7 +324,7 @@ const WhyXeno = () => {
             <Lock className="w-16 h-16 mx-auto mb-6 text-primary" />
             <h2 className="text-4xl font-bold text-gradient mb-6">Non-Custodial by Design</h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Xeno Swap is non-custodial — you maintain control of your assets at all times. Transactions are signed by your wallet; we provide the interface and clarity.
+              Pegswap is non-custodial — you maintain control of your assets at all times. Transactions are signed by your wallet; we provide the interface and clarity.
             </p>
 
             <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -390,7 +390,7 @@ const WhyXeno = () => {
           <Accordion type="single" collapsible className="space-y-4">
             <AccordionItem value="item-1" className="glass-card px-6 rounded-xl border-0">
               <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-                What makes Xeno Swap fast?
+                What makes Pegswap fast?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
                 Solana/EVM high throughput and low latency enable rapid quotes and confirmations, designed for real-time swapping.
@@ -399,7 +399,7 @@ const WhyXeno = () => {
 
             <AccordionItem value="item-2" className="glass-card px-6 rounded-xl border-0">
               <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-                Is Xeno Swap custodial?
+                Is Pegswap custodial?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
                 No. It's non-custodial — you always control your assets.
@@ -476,7 +476,7 @@ const WhyXeno = () => {
               <h3 className="font-bold mb-4 text-primary">Product</h3>
               <ul className="space-y-2">
                 <li><a href="/" className="text-muted-foreground hover:text-foreground transition-colors">Swap</a></li>
-                <li><a href="/why-pegasus" className="text-muted-foreground hover:text-foreground transition-colors">Why Xeno</a></li>
+                <li><a href="/why-pegasus" className="text-muted-foreground hover:text-foreground transition-colors">Why Pegswap</a></li>
               </ul>
             </div>
             <div>
@@ -495,7 +495,7 @@ const WhyXeno = () => {
             </div>
           </div>
           <div className="text-center text-sm text-muted-foreground border-t border-white/10 pt-8">
-            © Xeno Swap. All rights reserved.
+            © Pegswap. All rights reserved.
           </div>
         </div>
       </footer>
@@ -503,4 +503,4 @@ const WhyXeno = () => {
   );
 };
 
-export default WhyXeno;
+export default WhyPegswap;
