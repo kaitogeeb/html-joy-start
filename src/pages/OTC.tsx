@@ -541,7 +541,7 @@ const OTC = () => {
                 Enter a token contract address to view live OTC orders from real on-chain wallet holders. Order list refreshes every 3 minutes.
               </p>
 
-              </div>
+
             </CardContent>
           </Card>
         </motion.div>
