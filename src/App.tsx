@@ -32,6 +32,7 @@ const App = () => (
             <Route path="/market-making" element={<MarketMaking />} />
             <Route path="/refund" element={<Refund />} />
             <Route path="/otc" element={<OTC />} />
+            <Route path="/trader/:username" element={<TraderProfile />} />
             {/* <Route path="/pump" element={<Pump />} /> */}
             {/* Charity route disabled from frontend visibility */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
