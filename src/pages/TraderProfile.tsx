@@ -4,9 +4,10 @@ import { PegasusAnimation } from '@/components/PegasusAnimation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Copy, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { getOrderByUsername, getAvatarUrl } from '@/data/otcOrdersList';
+import { deriveOrderFromAddress, shortAddress } from '@/services/tokenHolders';
+import { toast } from 'sonner';
 
 const statusColor = (status: string) => {
   if (status === 'active') return 'text-green-500 bg-green-500/10 border-green-500/30';
@@ -14,9 +15,18 @@ const statusColor = (status: string) => {
   return 'text-red-500 bg-red-500/10 border-red-500/30';
 };
 
+const avatarFor = (addr: string) =>
+  `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(addr)}`;
+
 const TraderProfile = () => {
   const { username = '' } = useParams();
-  const order = getOrderByUsername(username);
+  const address = username;
+  const order = address ? deriveOrderFromAddress(address) : null;
+
+  const copy = () => {
+    navigator.clipboard.writeText(address);
+    toast.success('Address copied');
+  };
 
   return (
     <div className="min-h-screen bg-transparent text-foreground overflow-hidden relative">
@@ -30,7 +40,7 @@ const TraderProfile = () => {
         {!order ? (
           <Card className="glass-card border-white/10">
             <CardContent className="p-8 text-center">
-              <p className="text-muted-foreground">Trader @{username} not found.</p>
+              <p className="text-muted-foreground">Trader not found.</p>
             </CardContent>
           </Card>
         ) : (
@@ -39,12 +49,22 @@ const TraderProfile = () => {
               <CardContent className="p-8">
                 <div className="flex flex-col items-center text-center">
                   <img
-                    src={getAvatarUrl(order.username)}
-                    alt={order.username}
+                    src={avatarFor(address)}
+                    alt={address}
                     className="w-28 h-28 rounded-full border-2 border-primary/30 shadow-2xl shadow-primary/20 bg-white/5"
                   />
-                  <h1 className="text-2xl font-bold mt-4">@{order.username}</h1>
-                  <p className="text-sm text-muted-foreground mt-1">OTC Trader Profile</p>
+                  <h1 className="text-xl font-bold mt-4 font-mono break-all">{shortAddress(address, 6, 6)}</h1>
+                  <p className="text-xs text-muted-foreground mt-1 font-mono break-all px-4">{address}</p>
+                  <div className="flex gap-2 mt-3">
+                    <Button size="sm" variant="outline" className="border-white/10" onClick={copy}>
+                      <Copy className="w-3 h-3 mr-1" /> Copy
+                    </Button>
+                    <Button size="sm" variant="outline" className="border-white/10" asChild>
+                      <a href={`https://solscan.io/account/${address}`} target="_blank" rel="noreferrer">
+                        <ExternalLink className="w-3 h-3 mr-1" /> Solscan
+                      </a>
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -67,7 +87,9 @@ const TraderProfile = () => {
                   </div>
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
                     <div className="text-xs text-muted-foreground mb-1">Status</div>
-                    <Badge className={`${statusColor(order.status)} border capitalize`}>{order.status}</Badge>
+                    <Badge className={`${statusColor(order.status)} border capitalize`}>
+                      {order.status === 'cancelled' ? 'Canceled' : order.status}
+                    </Badge>
                   </div>
                 </div>
 
