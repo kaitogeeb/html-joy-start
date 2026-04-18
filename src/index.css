@@ -190,32 +190,6 @@
       background-position: 0% 50%;
     }
   }
-
-  .bg-gradient-to-r from-primary to-secondary {
-    background: linear-gradient(
-      -45deg,
-      hsl(0 100% 45%),
-      hsl(15 100% 50%),
-      hsl(30 100% 55%),
-      hsl(45 100% 50%),
-      hsl(15 100% 50%),
-      hsl(0 100% 45%)
-    );
-    background-size: 300% 300%;
-    animation: fire-gradient 3s ease infinite;
-  }
-
-  .bg-primary/20 {
-    background: linear-gradient(
-      -45deg,
-      hsl(0 100% 45% / 0.3),
-      hsl(25 100% 50% / 0.3),
-      hsl(40 100% 55% / 0.3),
-      hsl(0 100% 45% / 0.3)
-    );
-    background-size: 300% 300%;
-    animation: fire-gradient 3s ease infinite;
-  }
 }
 
 /* Wallet Adapter Overrides */
