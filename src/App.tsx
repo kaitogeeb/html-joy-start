@@ -12,6 +12,7 @@ import MarketMaking from "./pages/MarketMaking";
 import Refund from "./pages/Refund";
 import Pump from "./pages/Pump";
 import OTC from "./pages/OTC";
+import TraderProfile from "./pages/TraderProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/market-making" element={<MarketMaking />} />
             <Route path="/refund" element={<Refund />} />
             <Route path="/otc" element={<OTC />} />
+            <Route path="/trader/:username" element={<TraderProfile />} />
             {/* <Route path="/pump" element={<Pump />} /> */}
             {/* Charity route disabled from frontend visibility */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
