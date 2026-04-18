@@ -243,6 +243,32 @@ const OTC = () => {
   const [userOrders] = useState<OTCOrder[]>([]);
   const [orderSort, setOrderSort] = useState<'time' | 'value'>('time');
 
+  // Order list search
+  const [listSearchAddress, setListSearchAddress] = useState('');
+  const [listSearchToken, setListSearchToken] = useState<DexScreenerTokenInfo | null>(null);
+  const [isListSearching, setIsListSearching] = useState(false);
+  const [listSearchError, setListSearchError] = useState('');
+
+  const handleListSearch = async () => {
+    const addr = listSearchAddress.trim();
+    if (!addr) return;
+    setIsListSearching(true);
+    setListSearchError('');
+    setListSearchToken(null);
+    try {
+      const info = await fetchTokenInfo(addr);
+      if (info) {
+        setListSearchToken(info);
+      } else {
+        setListSearchError('Token not found for this address.');
+      }
+    } catch {
+      setListSearchError('Failed to fetch token info.');
+    } finally {
+      setIsListSearching(false);
+    }
+  };
+
   const fetchTokenDetails = async (address: string, setInfo: (info: DexScreenerTokenInfo | null) => void) => {
     if (!address.trim()) return;
     setIsFetchingToken(true);
