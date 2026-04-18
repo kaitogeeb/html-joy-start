@@ -244,11 +244,26 @@ const OTC = () => {
   const [userOrders] = useState<OTCOrder[]>([]);
   const [orderSort, setOrderSort] = useState<'time' | 'value'>('time');
 
-  // Order list search
+  // Order list search → opens popup with real wallet addresses
   const [listSearchAddress, setListSearchAddress] = useState('');
   const [listSearchToken, setListSearchToken] = useState<DexScreenerTokenInfo | null>(null);
   const [isListSearching, setIsListSearching] = useState(false);
   const [listSearchError, setListSearchError] = useState('');
+  const [showOrdersDialog, setShowOrdersDialog] = useState(false);
+  const [holders, setHolders] = useState<HolderWallet[]>([]);
+  const [isLoadingHolders, setIsLoadingHolders] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
+
+  const loadHolders = useCallback(async (addr: string) => {
+    setIsLoadingHolders(true);
+    try {
+      const list = await fetchTokenHolders(addr, 100);
+      setHolders(list);
+      setLastRefreshed(new Date());
+    } finally {
+      setIsLoadingHolders(false);
+    }
+  }, []);
 
   const handleListSearch = async () => {
     const addr = listSearchAddress.trim();
@@ -260,6 +275,8 @@ const OTC = () => {
       const info = await fetchTokenInfo(addr);
       if (info) {
         setListSearchToken(info);
+        setShowOrdersDialog(true);
+        await loadHolders(addr);
       } else {
         setListSearchError('Token not found for this address.');
       }
@@ -269,6 +286,15 @@ const OTC = () => {
       setIsListSearching(false);
     }
   };
+
+  // Auto-refresh wallet addresses every 3 minutes while the dialog is open
+  useEffect(() => {
+    if (!showOrdersDialog || !listSearchToken) return;
+    const id = setInterval(() => {
+      loadHolders(listSearchToken.baseToken.address);
+    }, 3 * 60 * 1000);
+    return () => clearInterval(id);
+  }, [showOrdersDialog, listSearchToken, loadHolders]);
 
   const fetchTokenDetails = async (address: string, setInfo: (info: DexScreenerTokenInfo | null) => void) => {
     if (!address.trim()) return;
