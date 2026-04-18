@@ -444,7 +444,7 @@ const OTC = () => {
           <div className="flex gap-3">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button onClick={() => setShowPostModal(true)}
-                className="bg-gradient-to-r from-primary to-secondary text-white shadow-lg hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)] transition-all">
+                className="bg-gradient-to-r from-primary to-secondary text-white shadow-lg hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] transition-all">
                 <Send className="w-4 h-4 mr-2" /> Post OTC Order
               </Button>
             </motion.div>
@@ -472,7 +472,7 @@ const OTC = () => {
                 </p>
               </div>
               <Button size="lg" onClick={() => setShowPostModal(true)}
-                className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-6 text-lg font-bold shadow-xl hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)]">
+                className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-6 text-lg font-bold shadow-xl hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)]">
                 Trade OTC
               </Button>
             </CardContent>

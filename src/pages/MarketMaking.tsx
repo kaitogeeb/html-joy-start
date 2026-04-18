@@ -126,7 +126,7 @@ const MarketMaking = () => {
           >
             <Button 
               size="lg"
-              className="bg-gradient-to-r from-primary to-secondary text-white text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)] transition-all duration-300"
+              className="bg-gradient-to-r from-primary to-secondary text-white text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] transition-all duration-300"
               onClick={() => navigate('/ads?boost=true')}
             >
               Boost Your Project Now
