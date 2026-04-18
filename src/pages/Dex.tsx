@@ -330,7 +330,7 @@ const Dex = () => {
         {/* Footer */}
         <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-12 text-center text-xs sm:text-sm text-muted-foreground">
           <p>Built with ⚡ on {chainName}</p>
-          <Link to="/why-pegasus" className="text-primary hover:underline mt-1 inline-block">Why Xeno?</Link>
+          <Link to="/why-pegasus" className="text-primary hover:underline mt-1 inline-block">Why Pegswap?</Link>
         </motion.footer>
       </main>
 

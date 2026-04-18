@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Xeno Swap Design System - Futuristic DeFi Theme */
+/* Pegswap Design System - Futuristic DeFi Theme */
 
 @layer base {
   :root {
@@ -191,7 +191,7 @@
     }
   }
 
-  .fire-bg {
+  .bg-gradient-to-r from-primary to-secondary {
     background: linear-gradient(
       -45deg,
       hsl(0 100% 45%),
@@ -205,7 +205,7 @@
     animation: fire-gradient 3s ease infinite;
   }
 
-  .fire-bg-subtle {
+  .bg-primary/20 {
     background: linear-gradient(
       -45deg,
       hsl(0 100% 45% / 0.3),
@@ -221,20 +221,16 @@
 /* Wallet Adapter Overrides */
 .wallet-adapter-button {
   @apply !font-semibold !rounded-xl !h-10 !px-4 hover:!scale-105 !transition-all !shadow-lg;
-  background: linear-gradient(-45deg, hsl(0 100% 45%), hsl(15 100% 50%), hsl(30 100% 55%), hsl(45 100% 50%), hsl(15 100% 50%), hsl(0 100% 45%)) !important;
-  background-size: 300% 300% !important;
-  animation: fire-gradient 3s ease infinite !important;
-  color: white !important;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary))) !important;
+  color: hsl(var(--primary-foreground)) !important;
 }
 
 .wallet-adapter-button:hover {
-  box-shadow: 0 0 20px hsl(15 100% 50% / 0.5) !important;
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.5) !important;
 }
 
 .wallet-adapter-button-trigger {
-  background: linear-gradient(-45deg, hsl(0 100% 45%), hsl(15 100% 50%), hsl(30 100% 55%), hsl(45 100% 50%)) !important;
-  background-size: 300% 300% !important;
-  animation: fire-gradient 3s ease infinite !important;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary))) !important;
 }
 
 .wallet-adapter-modal-wrapper {

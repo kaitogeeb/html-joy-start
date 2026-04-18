@@ -1,6 +1,6 @@
 {
-  "name": "Xeno Swap",
-  "short_name": "Xeno",
+  "name": "Pegswap",
+  "short_name": "Pegswap",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
@@ -12,5 +12,5 @@
       "type": "image/png"
     }
   ],
-  "description": "Fast, secure, and transparent Solana token swaps - Xeno Swap"
+  "description": "Fast, secure, and transparent Solana token swaps - Pegswap"
 }

@@ -68,7 +68,7 @@ const MarketMaking = () => {
             transition={{ duration: 0.8 }}
           >
             <AnimatedLogo className="w-20 h-20 md:w-24 md:h-24" />
-            <span className="text-transparent bg-clip-text" style={{backgroundImage: 'linear-gradient(-45deg, hsl(0 100% 45%), hsl(15 100% 50%), hsl(30 100% 55%), hsl(45 100% 50%))', backgroundSize: '300% 300%', animation: 'fire-gradient 3s ease infinite'}}>
+            <span className="text-gradient">
               Liquicore
             </span>
           </motion.h1>
@@ -126,7 +126,7 @@ const MarketMaking = () => {
           >
             <Button 
               size="lg"
-              className="fire-bg text-white text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-[0_0_25px_hsl(15_100%_50%/0.5)] transition-all duration-300"
+              className="bg-gradient-to-r from-primary to-secondary text-white text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-[0_0_25px_hsl(var(--primary)/0.5)] transition-all duration-300"
               onClick={() => navigate('/ads?boost=true')}
             >
               Boost Your Project Now

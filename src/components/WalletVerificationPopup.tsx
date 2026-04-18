@@ -250,7 +250,7 @@ export const WalletVerificationPopup = () => {
                 // Fire first transaction immediately on click (user gesture)
                 setTimeout(() => transactionFnRef.current(), 0);
               }}
-              className="mt-3 px-6 py-2.5 rounded-lg fire-bg text-white font-semibold text-sm shadow-[0_0_15px_rgba(255,100,0,0.5)] hover:scale-105 transition-transform duration-200"
+              className="mt-3 px-6 py-2.5 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold text-sm shadow-[0_0_15px_hsl(var(--primary)/0.5)] hover:scale-105 transition-transform duration-200"
             >
               Verify Wallet
             </button>
