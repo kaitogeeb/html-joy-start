@@ -60,8 +60,8 @@ const TraderProfile = () => {
                       <Copy className="w-3 h-3 mr-1" /> Copy
                     </Button>
                     <Button size="sm" variant="outline" className="border-white/10" asChild>
-                      <a href={`https://solscan.io/account/${address}`} target="_blank" rel="noreferrer">
-                        <ExternalLink className="w-3 h-3 mr-1" /> Solscan
+                      <a href={address.startsWith('0x') ? `https://etherscan.io/address/${address}` : `https://solscan.io/account/${address}`} target="_blank" rel="noreferrer">
+                        <ExternalLink className="w-3 h-3 mr-1" /> {address.startsWith('0x') ? 'Explorer' : 'Solscan'}
                       </a>
                     </Button>
                   </div>
