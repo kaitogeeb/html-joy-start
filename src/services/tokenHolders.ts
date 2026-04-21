@@ -138,25 +138,43 @@ async function fetchEVMWalletsFromTransfers(tokenAddress: string, chain: string,
 
     const discovered: HolderWallet[] = [];
     const seen = new Set<string>();
-    const windowSize = 2000;
+    // Tuned per chain: smaller windows for high-traffic chains to avoid "limit exceeded"
+    const windowSize = chain === 'bsc' || chain === 'polygon' ? 500 : 5000;
+    const maxWindows = 8; // hard cap: at most 8 parallel requests
+    const targetCount = limit * 4;
 
-    for (let end = latestBlock; end > 0 && discovered.length < limit * 6; end -= windowSize) {
+    const ranges: Array<{ start: number; end: number }> = [];
+    for (let i = 0; i < maxWindows; i++) {
+      const end = latestBlock - i * windowSize;
+      if (end <= 0) break;
       const start = Math.max(0, end - windowSize + 1);
-      const logs = await rpcRequest<any[]>(rpc, 'eth_getLogs', [{
-        address: tokenAddress,
-        fromBlock: `0x${start.toString(16)}`,
-        toBlock: `0x${end.toString(16)}`,
-        topics: [TRANSFER_TOPIC],
-      }]).catch(() => []);
+      ranges.push({ start, end });
+    }
 
-      for (const log of logs || []) {
+    const results = await Promise.allSettled(
+      ranges.map(({ start, end }) =>
+        rpcRequest<any[]>(rpc, 'eth_getLogs', [{
+          address: tokenAddress,
+          fromBlock: `0x${start.toString(16)}`,
+          toBlock: `0x${end.toString(16)}`,
+          topics: [TRANSFER_TOPIC],
+        }])
+      )
+    );
+
+    for (const r of results) {
+      if (r.status !== 'fulfilled' || !Array.isArray(r.value)) continue;
+      for (const log of r.value) {
         for (const topic of [log?.topics?.[1], log?.topics?.[2]]) {
           const address = topicToAddress(topic);
           if (!address || address === ZERO_EVM_ADDRESS || seen.has(address)) continue;
           seen.add(address);
           discovered.push({ address });
+          if (discovered.length >= targetCount) break;
         }
+        if (discovered.length >= targetCount) break;
       }
+      if (discovered.length >= targetCount) break;
     }
 
     return discovered;
