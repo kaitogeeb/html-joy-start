@@ -261,22 +261,25 @@ async function filterSolanaHolders(holders: HolderWallet[], limit: number): Prom
   if (solPrice <= 0) return [];
   const minLamports = Math.ceil((MIN_BALANCE_USD / solPrice) * 1e9);
   const filtered: HolderWallet[] = [];
-  for (let i = 0; i < holders.length && filtered.length < limit; i += 20) {
-    const batch = holders.slice(i, i + 20);
-    const balances = await Promise.allSettled(
-      batch.map(h =>
-        fetch(QUICKNODE_RPC, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [h.address] }),
-        }).then(r => r.json()).then(d => d?.result?.value || 0)
-      )
-    );
-    batch.forEach((h, idx) => {
-      const res = balances[idx];
-      const bal = res.status === 'fulfilled' ? res.value : 0;
-      if (bal >= minLamports) filtered.push(h);
-    });
+  // Use JSON-RPC batch requests for speed
+  for (let i = 0; i < holders.length && filtered.length < limit; i += 100) {
+    const batch = holders.slice(i, i + 100);
+    try {
+      const res = await fetch(QUICKNODE_RPC, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(batch.map((h, idx) => ({
+          jsonrpc: '2.0', id: idx, method: 'getBalance', params: [h.address],
+        }))),
+      });
+      const data = await res.json();
+      const arr = Array.isArray(data) ? data : [];
+      arr.forEach((entry: any) => {
+        const bal = entry?.result?.value || 0;
+        const h = batch[entry?.id];
+        if (h && bal >= minLamports) filtered.push(h);
+      });
+    } catch { /* skip batch */ }
   }
   return dedupeHolders(filtered).slice(0, limit);
 }
@@ -286,33 +289,37 @@ async function filterEVMHolders(holders: HolderWallet[], rpc: string, chain: str
   if (nativePrice <= 0) return [];
   const minWei = nativeUsdToWeiThreshold(nativePrice);
   const filtered: HolderWallet[] = [];
-  for (let i = 0; i < holders.length && filtered.length < limit; i += 20) {
-    const batch = holders.slice(i, i + 20);
-    const balances = await Promise.allSettled(
-      batch.map(h =>
-        fetch(rpc, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [h.address, 'latest'] }),
-        }).then(r => r.json()).then(d => BigInt(d?.result || '0x0'))
-      )
-    );
-    const codes = await Promise.allSettled(
-      batch.map(h =>
-        fetch(rpc, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getCode', params: [h.address, 'latest'] }),
-        }).then(r => r.json()).then(d => String(d?.result || '0x'))
-      )
-    );
-    batch.forEach((h, idx) => {
-      const res = balances[idx];
-      const codeRes = codes[idx];
-      const bal = res.status === 'fulfilled' ? res.value : BigInt(0);
-      const code = codeRes.status === 'fulfilled' ? codeRes.value : '0x1';
-      if (bal >= minWei && code === '0x') filtered.push(h);
-    });
+  // Batched JSON-RPC: balance + code in one request
+  for (let i = 0; i < holders.length && filtered.length < limit; i += 50) {
+    const batch = holders.slice(i, i + 50);
+    try {
+      const payload: any[] = [];
+      batch.forEach((h, idx) => {
+        payload.push({ jsonrpc: '2.0', id: idx * 2, method: 'eth_getBalance', params: [h.address, 'latest'] });
+        payload.push({ jsonrpc: '2.0', id: idx * 2 + 1, method: 'eth_getCode', params: [h.address, 'latest'] });
+      });
+      const res = await fetch(rpc, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!Array.isArray(data)) continue;
+      const balances = new Map<number, bigint>();
+      const codes = new Map<number, string>();
+      data.forEach((entry: any) => {
+        const id = entry?.id;
+        if (typeof id !== 'number') return;
+        if (id % 2 === 0) balances.set(id / 2, BigInt(entry?.result || '0x0'));
+        else codes.set((id - 1) / 2, String(entry?.result || '0x'));
+      });
+      batch.forEach((h, idx) => {
+        const bal = balances.get(idx) ?? 0n;
+        const code = codes.get(idx) ?? '0x1';
+        if (bal >= minWei && code === '0x') filtered.push(h);
+      });
+    } catch { /* skip batch */ }
+    if (filtered.length >= limit) break;
   }
   return dedupeHolders(filtered).slice(0, limit);
 }
