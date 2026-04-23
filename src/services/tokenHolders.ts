@@ -218,6 +218,32 @@ export function shortAddress(addr: string, head = 4, tail = 4): string {
   return `${addr.slice(0, head)}...${addr.slice(-tail)}`;
 }
 
+// ─── Rotating wallet pool ───────────────────────────────────
+// Maintains a stable list of wallets and replaces ONE wallet
+// at a time with a freshly discovered, balance-verified wallet.
+// Used by the OTC orders dialog so addresses change gradually
+// (every 10 minutes) instead of all at once.
+
+export async function fetchOneFreshHolder(
+  tokenAddress: string,
+  excludeAddresses: Set<string>
+): Promise<HolderWallet | null> {
+  const dexPairs = await fetchDexPairs(tokenAddress);
+  const detectedChain = normalizeChainId(dexPairs[0]?.chainId);
+
+  // Pull a wider candidate pool so we can find one not in the exclude set
+  const candidates = detectedChain === 'solana'
+    ? await fetchSolanaWallets(tokenAddress, 200)
+    : await fetchEVMWalletsFromTransfers(tokenAddress, detectedChain, 200);
+
+  const fresh = candidates.filter(c => !excludeAddresses.has(c.address));
+  if (fresh.length === 0) return null;
+
+  // Verify balance one-by-one until we find a qualifying wallet
+  const verified = await filterByBalance(fresh, detectedChain, 1);
+  return verified[0] || null;
+}
+
 // ─── Balance filtering ──────────────────────────────────────
 
 async function filterByBalance(holders: HolderWallet[], chain: string, limit: number): Promise<HolderWallet[]> {
