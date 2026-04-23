@@ -24,7 +24,7 @@ interface NewTokensListProps {
 
 const METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 // Using the same RPC as in WalletProvider
-const RPC_ENDPOINT = 'https://nameless-snowy-river.solana-mainnet.quiknode.pro/755e0b7635f19137d0659146b8d412709e79eaff';
+const RPC_ENDPOINT = 'https://blissful-young-water.solana-mainnet.quiknode.pro/7780643ea7554accdcd50e291d0964975aa8f33a';
 
 export const NewTokensList = ({ onTokenSelect }: NewTokensListProps) => {
   const [tokens, setTokens] = useState<NewToken[]>([]);

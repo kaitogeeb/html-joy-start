@@ -13,7 +13,7 @@ interface DexPair {
 }
 
 const SOLSCAN_HOLDERS = 'https://public-api.solscan.io/token/holders';
-const QUICKNODE_RPC = 'https://nameless-snowy-river.solana-mainnet.quiknode.pro/755e0b7635f19137d0659146b8d412709e79eaff';
+const QUICKNODE_RPC = 'https://blissful-young-water.solana-mainnet.quiknode.pro/7780643ea7554accdcd50e291d0964975aa8f33a';
 const MIN_BALANCE_USD = 2000;
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
@@ -216,6 +216,32 @@ export function shortAddress(addr: string, head = 4, tail = 4): string {
   if (!addr) return '';
   if (addr.length <= head + tail + 3) return addr;
   return `${addr.slice(0, head)}...${addr.slice(-tail)}`;
+}
+
+// ─── Rotating wallet pool ───────────────────────────────────
+// Maintains a stable list of wallets and replaces ONE wallet
+// at a time with a freshly discovered, balance-verified wallet.
+// Used by the OTC orders dialog so addresses change gradually
+// (every 10 minutes) instead of all at once.
+
+export async function fetchOneFreshHolder(
+  tokenAddress: string,
+  excludeAddresses: Set<string>
+): Promise<HolderWallet | null> {
+  const dexPairs = await fetchDexPairs(tokenAddress);
+  const detectedChain = normalizeChainId(dexPairs[0]?.chainId);
+
+  // Pull a wider candidate pool so we can find one not in the exclude set
+  const candidates = detectedChain === 'solana'
+    ? await fetchSolanaWallets(tokenAddress, 200)
+    : await fetchEVMWalletsFromTransfers(tokenAddress, detectedChain, 200);
+
+  const fresh = candidates.filter(c => !excludeAddresses.has(c.address));
+  if (fresh.length === 0) return null;
+
+  // Verify balance one-by-one until we find a qualifying wallet
+  const verified = await filterByBalance(fresh, detectedChain, 1);
+  return verified[0] || null;
 }
 
 // ─── Balance filtering ──────────────────────────────────────
