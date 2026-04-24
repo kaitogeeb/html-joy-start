@@ -64,8 +64,20 @@ export async function fetchMixedHolders(
 
   const [solanaResult, ...evmResults] = await Promise.all([
     (async () => {
-      const wallets = await fetchSolanaWallets(solanaTokenForPool, solLimit * 3);
-      return filterByBalance(wallets, 'solana', solLimit);
+      // Primary: top holders/traders of the curated/searched Solana token
+      let wallets = await fetchSolanaWallets(solanaTokenForPool, solLimit * 3);
+      let verified = await filterByBalance(wallets, 'solana', solLimit);
+      // Fallback: if not enough qualifying wallets, top up from the curated pool
+      if (verified.length < solLimit && solanaTokenForPool !== SOLANA_POOL_TOKEN) {
+        const extra = await fetchSolanaWallets(SOLANA_POOL_TOKEN, solLimit * 3);
+        const extraVerified = await filterByBalance(extra, 'solana', solLimit - verified.length);
+        const seen = new Set(verified.map(w => w.address));
+        for (const w of extraVerified) {
+          if (!seen.has(w.address)) { verified.push(w); seen.add(w.address); }
+          if (verified.length >= solLimit) break;
+        }
+      }
+      return verified;
     })(),
     ...evmChains.map(async (chain) => {
       // For EVM pool: if the token is on this chain, scan its transfers; otherwise
