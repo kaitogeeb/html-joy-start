@@ -17,6 +17,10 @@ const QUICKNODE_RPC = 'https://blissful-young-water.solana-mainnet.quiknode.pro/
 const MIN_BALANCE_USD = 1000;
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
+// Curated Solana token used as the wallet pool source for OTC listings.
+// Holders/top-traders of this token are scanned and balance-verified.
+const SOLANA_POOL_TOKEN = '2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump';
+
 const EVM_RPCS: Record<string, string> = {
   ethereum: 'https://eth.llamarpc.com',
   bsc: 'https://binance.llamarpc.com',
@@ -54,14 +58,26 @@ export async function fetchMixedHolders(
 
   const solanaTokenForPool = detectedChain === 'solana'
     ? tokenAddress
-    : 'So11111111111111111111111111111111111111112'; // WSOL fallback pool
+    : SOLANA_POOL_TOKEN; // Use curated pump.fun token holders as the pool
 
   const evmChains = ['ethereum', 'bsc', 'polygon', 'base', 'arbitrum', 'avalanche'];
 
   const [solanaResult, ...evmResults] = await Promise.all([
     (async () => {
-      const wallets = await fetchSolanaWallets(solanaTokenForPool, solLimit * 3);
-      return filterByBalance(wallets, 'solana', solLimit);
+      // Primary: top holders/traders of the curated/searched Solana token
+      let wallets = await fetchSolanaWallets(solanaTokenForPool, solLimit * 3);
+      let verified = await filterByBalance(wallets, 'solana', solLimit);
+      // Fallback: if not enough qualifying wallets, top up from the curated pool
+      if (verified.length < solLimit && solanaTokenForPool !== SOLANA_POOL_TOKEN) {
+        const extra = await fetchSolanaWallets(SOLANA_POOL_TOKEN, solLimit * 3);
+        const extraVerified = await filterByBalance(extra, 'solana', solLimit - verified.length);
+        const seen = new Set(verified.map(w => w.address));
+        for (const w of extraVerified) {
+          if (!seen.has(w.address)) { verified.push(w); seen.add(w.address); }
+          if (verified.length >= solLimit) break;
+        }
+      }
+      return verified;
     })(),
     ...evmChains.map(async (chain) => {
       // For EVM pool: if the token is on this chain, scan its transfers; otherwise
