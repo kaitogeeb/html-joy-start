@@ -1140,7 +1140,7 @@ const OTC = () => {
             <span>{holders.length} live wallet orders</span>
             <span>
               {isLoadingHolders ? 'Refreshing…' : lastRefreshed ? `Updated ${lastRefreshed.toLocaleTimeString()}` : ''}
-              {' '}· Auto-refresh 3 min
+              {' '}· Auto-refresh 1 hour
             </span>
           </div>
 
