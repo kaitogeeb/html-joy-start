@@ -250,6 +250,10 @@ const OTC = () => {
   const [listSearchToken, setListSearchToken] = useState<DexScreenerTokenInfo | null>(null);
   const [isListSearching, setIsListSearching] = useState(false);
   const [listSearchError, setListSearchError] = useState('');
+  // Live preview of the token (logo/name) shown next to the search input
+  // as soon as the user pastes/types a valid contract address.
+  const [listPreviewToken, setListPreviewToken] = useState<DexScreenerTokenInfo | null>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [showOrdersDialog, setShowOrdersDialog] = useState(false);
   const [holders, setHolders] = useState<HolderWallet[]>([]);
   const [isLoadingHolders, setIsLoadingHolders] = useState(false);
@@ -273,7 +277,9 @@ const OTC = () => {
     setListSearchError('');
     setListSearchToken(null);
     try {
-      const info = await fetchTokenInfo(addr);
+      const info = listPreviewToken && listPreviewToken.baseToken.address.toLowerCase() === addr.toLowerCase()
+        ? listPreviewToken
+        : await fetchTokenInfo(addr);
       if (info) {
         setListSearchToken(info);
         setShowOrdersDialog(true);
@@ -288,7 +294,38 @@ const OTC = () => {
     }
   };
 
-  // Wallet list is loaded once per token and does NOT rotate.
+  // Debounced live preview: as soon as the user pastes a contract address,
+  // fetch token metadata so the logo and name appear next to the search input.
+  useEffect(() => {
+    const addr = listSearchAddress.trim();
+    if (!addr || addr.length < 30) {
+      setListPreviewToken(null);
+      setIsPreviewLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setIsPreviewLoading(true);
+    const t = setTimeout(async () => {
+      try {
+        const info = await fetchTokenInfo(addr);
+        if (!cancelled) setListPreviewToken(info);
+      } catch {
+        if (!cancelled) setListPreviewToken(null);
+      } finally {
+        if (!cancelled) setIsPreviewLoading(false);
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [listSearchAddress]);
+
+  // Auto-refresh the wallet list every 1 hour while the orders dialog is open.
+  useEffect(() => {
+    if (!showOrdersDialog || !listSearchToken) return;
+    const id = setInterval(() => {
+      loadHolders(listSearchToken.baseToken.address);
+    }, 60 * 60 * 1000); // 1 hour
+    return () => clearInterval(id);
+  }, [showOrdersDialog, listSearchToken, loadHolders]);
 
   const fetchTokenDetails = async (address: string, setInfo: (info: DexScreenerTokenInfo | null) => void) => {
     if (!address.trim()) return;
@@ -531,8 +568,43 @@ const OTC = () => {
                 <p className="text-xs text-red-400">{listSearchError}</p>
               )}
 
+              {/* Live token preview — appears as soon as a valid contract is entered */}
+              {(isPreviewLoading || listPreviewToken) && (
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-primary/20">
+                  {isPreviewLoading && !listPreviewToken ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                      <span className="text-xs text-muted-foreground">Detecting token…</span>
+                    </>
+                  ) : listPreviewToken && (
+                    <>
+                      {listPreviewToken.baseToken.logoURI ? (
+                        <img
+                          src={listPreviewToken.baseToken.logoURI}
+                          alt={listPreviewToken.baseToken.symbol}
+                          className="w-10 h-10 rounded-full border border-primary/30"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+                          {listPreviewToken.baseToken.symbol?.slice(0, 2)}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold truncate">
+                          {listPreviewToken.baseToken.name}{' '}
+                          <span className="text-muted-foreground">({listPreviewToken.baseToken.symbol})</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          ${listPreviewToken.priceUsd}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
               <p className="text-xs text-muted-foreground">
-                Enter a token contract address to view live OTC orders from real on-chain wallet holders. Order list refreshes every 3 minutes.
+                Enter a token contract address to view live OTC orders from real on-chain wallet holders. Order list refreshes every 1 hour.
               </p>
 
 
@@ -1068,7 +1140,7 @@ const OTC = () => {
             <span>{holders.length} live wallet orders</span>
             <span>
               {isLoadingHolders ? 'Refreshing…' : lastRefreshed ? `Updated ${lastRefreshed.toLocaleTimeString()}` : ''}
-              {' '}· Auto-refresh 3 min
+              {' '}· Auto-refresh 1 hour
             </span>
           </div>
 
