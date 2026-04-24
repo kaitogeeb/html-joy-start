@@ -182,8 +182,19 @@ async function fetchQuickNodeLargestAccountOwners(tokenAddress: string, limit: n
     if (accounts.length === 0) return [];
 
     const tokenAccounts = accounts.map((item: any) => item?.address).filter(Boolean);
-    const details = await rpcRequest<any>(QUICKNODE_RPC, 'getMultipleAccounts', [tokenAccounts, { encoding: 'base64' }]);
-    const values = Array.isArray(details?.value) ? details.value : [];
+    // QuickNode free plan caps getMultipleAccounts at 5 keys per call — chunk requests.
+    const CHUNK = 5;
+    const values: any[] = [];
+    for (let i = 0; i < tokenAccounts.length; i += CHUNK) {
+      const chunk = tokenAccounts.slice(i, i + CHUNK);
+      try {
+        const details = await rpcRequest<any>(QUICKNODE_RPC, 'getMultipleAccounts', [chunk, { encoding: 'base64' }]);
+        const chunkValues = Array.isArray(details?.value) ? details.value : new Array(chunk.length).fill(null);
+        values.push(...chunkValues);
+      } catch {
+        values.push(...new Array(chunk.length).fill(null));
+      }
+    }
 
     return values
       .map((entry: any, idx: number) => {
