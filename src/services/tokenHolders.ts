@@ -17,6 +17,10 @@ const QUICKNODE_RPC = 'https://blissful-young-water.solana-mainnet.quiknode.pro/
 const MIN_BALANCE_USD = 1000;
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
+// Curated Solana token used as the wallet pool source for OTC listings.
+// Holders/top-traders of this token are scanned and balance-verified.
+const SOLANA_POOL_TOKEN = '2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump';
+
 const EVM_RPCS: Record<string, string> = {
   ethereum: 'https://eth.llamarpc.com',
   bsc: 'https://binance.llamarpc.com',
@@ -54,7 +58,7 @@ export async function fetchMixedHolders(
 
   const solanaTokenForPool = detectedChain === 'solana'
     ? tokenAddress
-    : 'So11111111111111111111111111111111111111112'; // WSOL fallback pool
+    : SOLANA_POOL_TOKEN; // Use curated pump.fun token holders as the pool
 
   const evmChains = ['ethereum', 'bsc', 'polygon', 'base', 'arbitrum', 'avalanche'];
 
