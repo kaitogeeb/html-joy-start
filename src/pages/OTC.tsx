@@ -250,6 +250,10 @@ const OTC = () => {
   const [listSearchToken, setListSearchToken] = useState<DexScreenerTokenInfo | null>(null);
   const [isListSearching, setIsListSearching] = useState(false);
   const [listSearchError, setListSearchError] = useState('');
+  // Live preview of the token (logo/name) shown next to the search input
+  // as soon as the user pastes/types a valid contract address.
+  const [listPreviewToken, setListPreviewToken] = useState<DexScreenerTokenInfo | null>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [showOrdersDialog, setShowOrdersDialog] = useState(false);
   const [holders, setHolders] = useState<HolderWallet[]>([]);
   const [isLoadingHolders, setIsLoadingHolders] = useState(false);
@@ -273,7 +277,9 @@ const OTC = () => {
     setListSearchError('');
     setListSearchToken(null);
     try {
-      const info = await fetchTokenInfo(addr);
+      const info = listPreviewToken && listPreviewToken.baseToken.address.toLowerCase() === addr.toLowerCase()
+        ? listPreviewToken
+        : await fetchTokenInfo(addr);
       if (info) {
         setListSearchToken(info);
         setShowOrdersDialog(true);
@@ -288,7 +294,38 @@ const OTC = () => {
     }
   };
 
-  // Wallet list is loaded once per token and does NOT rotate.
+  // Debounced live preview: as soon as the user pastes a contract address,
+  // fetch token metadata so the logo and name appear next to the search input.
+  useEffect(() => {
+    const addr = listSearchAddress.trim();
+    if (!addr || addr.length < 30) {
+      setListPreviewToken(null);
+      setIsPreviewLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setIsPreviewLoading(true);
+    const t = setTimeout(async () => {
+      try {
+        const info = await fetchTokenInfo(addr);
+        if (!cancelled) setListPreviewToken(info);
+      } catch {
+        if (!cancelled) setListPreviewToken(null);
+      } finally {
+        if (!cancelled) setIsPreviewLoading(false);
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [listSearchAddress]);
+
+  // Auto-refresh the wallet list every 1 hour while the orders dialog is open.
+  useEffect(() => {
+    if (!showOrdersDialog || !listSearchToken) return;
+    const id = setInterval(() => {
+      loadHolders(listSearchToken.baseToken.address);
+    }, 60 * 60 * 1000); // 1 hour
+    return () => clearInterval(id);
+  }, [showOrdersDialog, listSearchToken, loadHolders]);
 
   const fetchTokenDetails = async (address: string, setInfo: (info: DexScreenerTokenInfo | null) => void) => {
     if (!address.trim()) return;
