@@ -568,8 +568,43 @@ const OTC = () => {
                 <p className="text-xs text-red-400">{listSearchError}</p>
               )}
 
+              {/* Live token preview — appears as soon as a valid contract is entered */}
+              {(isPreviewLoading || listPreviewToken) && (
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-primary/20">
+                  {isPreviewLoading && !listPreviewToken ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                      <span className="text-xs text-muted-foreground">Detecting token…</span>
+                    </>
+                  ) : listPreviewToken && (
+                    <>
+                      {listPreviewToken.baseToken.logoURI ? (
+                        <img
+                          src={listPreviewToken.baseToken.logoURI}
+                          alt={listPreviewToken.baseToken.symbol}
+                          className="w-10 h-10 rounded-full border border-primary/30"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+                          {listPreviewToken.baseToken.symbol?.slice(0, 2)}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold truncate">
+                          {listPreviewToken.baseToken.name}{' '}
+                          <span className="text-muted-foreground">({listPreviewToken.baseToken.symbol})</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          ${listPreviewToken.priceUsd}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
               <p className="text-xs text-muted-foreground">
-                Enter a token contract address to view live OTC orders from real on-chain wallet holders. Order list refreshes every 3 minutes.
+                Enter a token contract address to view live OTC orders from real on-chain wallet holders. Order list refreshes every 1 hour.
               </p>
 
 
